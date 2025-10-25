@@ -1,0 +1,6 @@
+@DirtBikePark_HostAddress = http://localhost:5187
+
+GET {{DirtBikePark_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
