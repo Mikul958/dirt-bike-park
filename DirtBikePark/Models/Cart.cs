@@ -6,11 +6,6 @@ namespace DirtBikePark.Models
     {
         [Key]
         public Guid Id { get; set; }
-        public List<Booking> Bookings { get; set; }
-
-        public Cart()
-        {
-            // TODO
-        }
+        public List<Booking> Bookings { get; set; } = new List<Booking>();
     }
 }
