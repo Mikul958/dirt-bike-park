@@ -1,13 +1,20 @@
-﻿namespace DirtBikePark.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace DirtBikePark.Models
 {
     public class Booking
     {
-        public string bookingID { get; set; }
-        public string parkID { get; set; }
-        public string cartID { get; set; }
-        public int guestNumber { get; set; }
-        public decimal totalPrice { get; set; }
-        public List<string> bookingDates { get; set; }
+        [Key]
+        public int Id { get; set; }
+        [ForeignKey("Cart")]
+        public Guid CartID { get; set; }
+        [ForeignKey("Park")]
+        public int ParkID { get; set; }
+        public string Date { get; set; }
+        public int NumAdults { get; set; }
+        public int NumChildren { get; set; }
+        public decimal TotalPrice { get; set; }
 
         public Booking()
         {

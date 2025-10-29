@@ -1,9 +1,12 @@
-﻿namespace DirtBikePark.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DirtBikePark.Models
 {
     public class Cart
     {
-        public string cartID { get; set; }
-        public List<Booking> cartBookings { get; set; }
+        [Key]
+        public Guid Id { get; set; }
+        public List<Booking> Bookings { get; set; }
 
         public Cart()
         {
