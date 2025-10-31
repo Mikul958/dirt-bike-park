@@ -15,7 +15,7 @@ namespace DirtBikePark.Controllers
             _cartService = cartService;
         }
 
-        // GET https://{urlBase}/api/cart/{cartId}
+        // GET {protocol}://{urlBase}/api/cart/{cartId}
         [HttpGet("{cartId}")]
         public async Task<IActionResult> GetCart([FromRoute] string cartId)
         {
@@ -26,7 +26,7 @@ namespace DirtBikePark.Controllers
             return Ok(cart);
         }
 
-        // POST https://{urlBase}/api/cart/{cartId}/add?parkId={parkId} -- bookingInfo sent in request body
+        // POST {protocol}://{urlBase}/api/cart/{cartId}/add?parkId={parkId} -- bookingInfo sent in request body
         [HttpPost("{cartId}/add")]
         public async Task<IActionResult> AddBookingToCart([FromRoute] string cartId, [FromQuery] int parkId, [FromBody] Booking bookingInfo)
         {
@@ -37,7 +37,7 @@ namespace DirtBikePark.Controllers
             return Ok(addStatus);
         }
 
-        // PUT https://{urlBase}/api/cart/{cardId}/remove?bookingId={bookingId}
+        // PUT {protocol}://{urlBase}/api/cart/{cardId}/remove?bookingId={bookingId}
         [HttpPut("{cartId}/remove")]
         public async Task<IActionResult> RemoveBookingFromCart([FromRoute] string cartId, [FromQuery] int bookingId)
         {

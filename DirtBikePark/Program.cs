@@ -10,7 +10,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddScoped<ICartService, CartService>();
 
-// Add Swagger services (if we decide to switch to Swagger).
+// Add Swagger services ({protocol}://{urlBase}/swagger).
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
