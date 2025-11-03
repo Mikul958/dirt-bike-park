@@ -15,7 +15,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Add Entity Framework Core in-memory database.
-// TODO Tyler
+builder.Services.AddDbContext<DatabaseContext>(options =>
+{
+    options.UseInMemoryDatabase("DirtBikeDB");
+});
 
 // Build the app.
 WebApplication app = builder.Build();

@@ -1,7 +1,6 @@
 ﻿using DirtBikePark.Models;
 using Microsoft.EntityFrameworkCore;
 
-using DirtBikePark.Models;
 
 namespace DirtBikePark.Data
 {
@@ -11,7 +10,7 @@ namespace DirtBikePark.Data
         public DbSet<Park> Parks { get; set; }
         public DbSet<Cart> Carts { get; set; }
 
-        public DatbaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
+        public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
 
     }
 }
