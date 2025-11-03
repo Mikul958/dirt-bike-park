@@ -13,6 +13,8 @@ builder.Services.AddScoped<ICartService, CartService>();
 // Add Swagger services ({protocol}://{urlBase}/swagger).
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddControllers();
+builder.Services.AddScoped<IBookingService, BookingService>(); // <— add this
 
 // Add Entity Framework Core in-memory database.
 // TODO Tyler
