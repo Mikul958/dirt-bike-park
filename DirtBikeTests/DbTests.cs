@@ -1,16 +1,18 @@
-﻿using DirtBikePark.Interfaces;
-using DirtBikePark.Models;
-using DirtBikePark.Data;
-using DirtBikePark.Controllers;
+﻿//using DirtBikePark.Interfaces;
+//using DirtBikePark.Models;
+//using DirtBikePark.Data;
+//using DirtBikePark.Controllers;
+using DirtBikePark;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using System;
-//using System.Linq;
 using Xunit;
 
+//using System.Linq;
 namespace Tests
 {
 
-    public class DatabaseTests
+    public class DbTests
     {
         [Fact]
         public void Can_Add_Model_To_InMemory_Database()
@@ -45,5 +47,19 @@ namespace Tests
             //}
             Assert.Equal(1, 1);
         }
+
+        [Fact]
+        public void Example_AddsCorrectly()
+        {
+            var result = 2 + 2;
+            Assert.Equal(4, result);
+        }
+
+        //[Fact]
+        //public void WorksCorrectly()
+        //{
+        //    Assert.True(false);
+        //}
     }
 }
+
