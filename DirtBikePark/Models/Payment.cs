@@ -5,7 +5,7 @@ namespace DirtBikePark.Models
     public class Payment
     {
         [ForeignKey("Cart")]
-        public Guid CartID { get; set; }
+        public Guid CartId { get; set; }
         public string CardNumber { get; set; } = string.Empty;
         public string Ccv { get; set; } = string.Empty;
         public string ExpirationDate { get; set; } = string.Empty;
