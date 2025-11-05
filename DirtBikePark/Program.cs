@@ -14,7 +14,7 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
-builder.Services.AddScoped<IBookingService, BookingService>(); // <— add this
+builder.Services.AddScoped<IBookingService, BookingService>(); 
 
 // Add Entity Framework Core in-memory database.
 // TODO Tyler

@@ -4,9 +4,10 @@ namespace DirtBikePark.Interfaces
 {
     public interface IBookingService
     {
-        Task<Booking?> GetBookingAsync(Guid cartId, int bookingId);
-        Task<IReadOnlyList<Booking>> GetBookingsAsync(Guid cartId);
-        Task<Booking> CreateBookingAsync(Guid cartId, Booking booking);
-        Task<bool> RemoveBookingAsync(Guid cartId, int bookingId);
+        Task<IReadOnlyList<Booking>> GetBookingsAsync();                 // GetBookings()
+        Task<IReadOnlyList<Booking>> GetBookingsByParkAsync(int parkId); // GetBooking(parkId) -> list
+        Task<Booking> CreateBookingAsync(int parkId, Booking booking);   // CreateBooking(parkId)
+        Task<bool> RemoveBookingAsync(int bookingId);                    // RemoveBooking(bookingId)
     }
 }
+

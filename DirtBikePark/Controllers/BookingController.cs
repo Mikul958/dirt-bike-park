@@ -15,42 +15,46 @@ namespace DirtBikePark.Controllers
             _bookingService = bookingService;
         }
 
-        /// <summary>Get all bookings in a cart.</summary>
-        [HttpGet("{cartId:guid}")]
-        public async Task<ActionResult<IReadOnlyList<Booking>>> GetBookings([FromRoute] Guid cartId)
+        // GET /api/booking
+        [HttpGet]
+        public async Task<ActionResult<IReadOnlyList<Booking>>> GetBookings()
         {
-            var items = await _bookingService.GetBookingsAsync(cartId);
+            var items = await _bookingService.GetBookingsAsync();
             return Ok(items);
         }
 
-        /// <summary>Get a single booking by id.</summary>
-        [HttpGet("{cartId:guid}/{bookingId:int}")]
-        public async Task<ActionResult<Booking>> GetBooking([FromRoute] Guid cartId, [FromRoute] int bookingId)
+        // GET /api/booking/park/{parkId}
+        // (Your "GetBooking(parkId)" that returns a LIST)
+        [HttpGet("park/{parkId:int}")]
+        public async Task<ActionResult<IReadOnlyList<Booking>>> GetBooking([FromRoute] int parkId)
         {
-            var booking = await _bookingService.GetBookingAsync(cartId, bookingId);
-            if (booking is null) return NotFound();
-            return Ok(booking);
+            var items = await _bookingService.GetBookingsByParkAsync(parkId);
+            return Ok(items);
         }
 
-        /// <summary>Create a booking in a cart.</summary>
-        [HttpPost("{cartId:guid}")]
-        public async Task<ActionResult<Booking>> CreateBooking([FromRoute] Guid cartId, [FromBody] Booking booking)
+        // POST /api/booking/park/{parkId}
+        [HttpPost("park/{parkId:int}")]
+        public async Task<ActionResult<Booking>> CreateBooking([FromRoute] int parkId, [FromBody] Booking booking)
         {
-            // Defensive: ignore incoming Id/CartId and set server-side
+            // Ignore incoming Id; server assigns
             booking.Id = 0;
-            booking.CartId = cartId;
 
-            var created = await _bookingService.CreateBookingAsync(cartId, booking);
-            return CreatedAtAction(nameof(GetBooking),
-                new { cartId = cartId, bookingId = created.Id }, created);
+            var created = await _bookingService.CreateBookingAsync(parkId, booking);
+
+            return CreatedAtAction(
+                nameof(GetBooking),
+                new { parkId = parkId },
+                created
+            );
         }
 
-        /// <summary>Remove a booking from a cart.</summary>
-        [HttpDelete("{cartId:guid}/{bookingId:int}")]
-        public async Task<IActionResult> RemoveBooking([FromRoute] Guid cartId, [FromRoute] int bookingId)
+        // DELETE /api/booking/{bookingId}
+        [HttpDelete("{bookingId:int}")]
+        public async Task<IActionResult> RemoveBooking([FromRoute] int bookingId)
         {
-            var ok = await _bookingService.RemoveBookingAsync(cartId, bookingId);
+            var ok = await _bookingService.RemoveBookingAsync(bookingId);
             return ok ? NoContent() : NotFound();
         }
     }
 }
+
