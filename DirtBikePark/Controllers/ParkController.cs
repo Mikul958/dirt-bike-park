@@ -56,11 +56,8 @@ namespace DirtBikePark.Controllers
             if (park == null)
                 return BadRequest("Park can not be null.");
 
-            int newId = await _parkService.AddPark(park);
-            if (newId <= 0)
-                return BadRequest("Invalid park data.");
-
-			return CreatedAtAction(nameof(GetPark), new { parkId = newId }, park);
+            bool success = await _parkService.AddPark(park);  // Note: removing returned object for now since project just says to return success or failure
+			return Ok(success);
 		}
     }
 }

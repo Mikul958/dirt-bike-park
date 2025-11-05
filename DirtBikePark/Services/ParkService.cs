@@ -11,9 +11,9 @@ namespace DirtBikePark.Services
 		// written with mock data
 		private readonly List<Park> _parks = new List<Park>
 		{
-			new Park { Id = 1, Name = "Park One", Location = "Columbia", Description = "There are a lot of trees.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m },
-			new Park { Id = 2, Name = "Park Two", Location = "Charleston", Description = "There is a river through the middle.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m  },
-			new Park { Id = 3, Name = "Park Three", Location = "Greenville", Description = "It's pretty green.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m  }
+			new Park { Id = 1, Name = "Park One", Description = "There are a lot of trees.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m },
+			new Park { Id = 2, Name = "Park Two", Description = "There is a river through the middle.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m  },
+			new Park { Id = 3, Name = "Park Three", Description = "It's pretty green.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m  }
 		};
 		public Task<Park?> GetPark(int parkId)
 		{
@@ -26,12 +26,12 @@ namespace DirtBikePark.Services
 			return Task.FromResult<IEnumerable<Park>>(_parks);
 		}
 		
-		public Task<int> AddPark(Park park)
+		public Task<bool> AddPark(Park park)
         {
             if (park == null)
                 return Task.FromResult(false);
 
-            if (string.IsNullOrWhiteSpace(park.Name) || string.IsNullOrWhiteSpace(park.Location))
+            if (string.IsNullOrWhiteSpace(park.Name))
                 return Task.FromResult(false);
 
             int assignedId;
@@ -43,7 +43,7 @@ namespace DirtBikePark.Services
             park.Id = assignedId;
 			_parks.Add(park);
 			
-			return Task.FromResult(assignedId); //returns Id of added park, might need to change? (?)
+			return Task.FromResult(true);  // return success
 		}
 		
 		public Task<bool> RemovePark(int parkId)
