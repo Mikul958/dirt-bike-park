@@ -18,8 +18,8 @@ namespace DirtBikePark.Controllers
         }
 
         // GET {protocol}://{urlBase}/api/park/{parkId}
-        [HttpGet("{parkId:guid}")]
-        public async Task<IActionResult> GetPark([FromRoute] Guid parkId)
+        [HttpGet("{parkId:int}")]
+        public async Task<IActionResult> GetPark([FromRoute] int parkId)
         {
             var park = await _parkService.GetPark(parkId);
             if (park == null)
@@ -38,8 +38,8 @@ namespace DirtBikePark.Controllers
         }
 
         // DELETE {protocol}://{urlBase}/api/park/{parkId}
-        [HttpDelete("{parkId:guid}")]
-        public async Task<IActionResult> RemovePark([FromRoute] Guid parkId)
+        [HttpDelete("{parkId:int}")]
+        public async Task<IActionResult> RemovePark([FromRoute] int parkId)
         {
             var removed = await _parkService.RemovePark(parkId);
             if (removed)
@@ -48,5 +48,19 @@ namespace DirtBikePark.Controllers
             }
             return NotFound($"Park with ID {parkId} was not found.");
         }
+		
+		// POST {protocol}://{urlBase}/api/park/
+		[HttpPost]
+		public async Task<IActionResult> AddPark([FromBody] Park park)
+		{
+            if (park == null)
+                return BadRequest("Park can not be null.");
+
+            int newId = await _parkService.AddPark(park);
+            if (newId <= 0)
+                return BadRequest("Invalid park data.");
+
+			return CreatedAtAction(nameof(GetPark), new { parkId = newId }, park);
+		}
     }
 }
