@@ -9,13 +9,6 @@ namespace DirtBikePark.Services
 {
 	public class ParkService : IParkService
     {
-		// written with mock data
-		//private readonly List<Park> _parks = new List<Park>
-		//{
-		//	new Park { Id = 1, Name = "Park One", Description = "There are a lot of trees.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m },
-		//	new Park { Id = 2, Name = "Park Two", Description = "There is a river through the middle.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m  },
-		//	new Park { Id = 3, Name = "Park Three", Description = "It's pretty green.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m  }
-		//};
 
 		private readonly DatabaseContext _context;
 
