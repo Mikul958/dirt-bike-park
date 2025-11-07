@@ -39,7 +39,11 @@ namespace DirtBikePark.Services
 
         public Task<bool> AddBookingToCart(Guid cartId, int parkId, Booking bookingInfo)
         {
-            if (_context.Carts.Find(cartId) == null)
+            var cart = _context.Carts
+                .Include(c => c.Bookings)
+                .FirstOrDefault(c => c.Id == cartId);
+
+            if (cart == null)
                 return Task.FromResult(false);
 
             if (_context.Parks.Find(parkId) == null)
@@ -51,8 +55,9 @@ namespace DirtBikePark.Services
             bookingInfo.CartId = cartId;
             bookingInfo.ParkId = parkId;
 
-            var cart = _context.Carts.Find(cartId);
+           
             cart.Bookings.Add(bookingInfo);
+            _context.Bookings.Add(bookingInfo);  // Might delete later after merge with BookingService Class implemented
             _context.SaveChanges();
 
             // Maybe add more sanity checks to ensure that the same booking hasn't been made in the same cart
