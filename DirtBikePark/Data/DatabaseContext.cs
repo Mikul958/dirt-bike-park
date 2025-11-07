@@ -1,11 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DirtBikePark.Models;
+using Microsoft.EntityFrameworkCore;
 
-using DirtBikePark.Models;
 
 namespace DirtBikePark.Data
 {
     public class DatabaseContext : DbContext
     {
-        // TODO
+        public DbSet<Booking> Bookings { get; set; }
+        public DbSet<Park> Parks { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+
+        public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
+
     }
 }
