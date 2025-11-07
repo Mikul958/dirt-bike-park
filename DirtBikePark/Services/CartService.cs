@@ -1,10 +1,16 @@
-﻿using DirtBikePark.Interfaces;
+﻿using DirtBikePark.Data;
+using DirtBikePark.Interfaces;
 using DirtBikePark.Models;
 
 namespace DirtBikePark.Services
 {
     public class CartService : ICartService
     {
+        private readonly DatabaseContext _context;
+        public CartService(DatabaseContext context)
+        {
+            _context = context;
+        }
         public Task<Cart> GetCart(Guid? cartId)
         {
             // TODO call DatabaseContext and implement logic there.
