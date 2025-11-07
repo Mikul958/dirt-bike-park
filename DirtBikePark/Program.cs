@@ -8,14 +8,13 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IParkService, ParkService>();
 
 // Add Swagger services ({protocol}://{urlBase}/swagger).
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddControllers();
-builder.Services.AddScoped<IBookingService, BookingService>(); 
 
 // Add Entity Framework Core in-memory database.
 builder.Services.AddDbContext<DatabaseContext>(options =>
