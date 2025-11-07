@@ -26,6 +26,36 @@ namespace DirtBikePark.Data
                     context.Parks.AddRange(parks);
                     context.SaveChanges();
                 }
+
+                if (!context.Carts.Any())
+                {
+                    var carts = new List<Cart>
+                    {
+                        new Cart {Id = Guid.NewGuid() }
+                    };
+                    context.Carts.AddRange(carts);
+                    context.SaveChanges();
+                }
+
+                if (!context.Bookings.Any())
+                {
+                    var bookings = new List<Booking>
+                    {
+                        new Booking {Id = 10, CartId = context.Carts.First().Id, ParkId = 3, Date = "01-01-2001", NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m},
+                        new Booking {Id = 11, CartId = context.Carts.First().Id, ParkId = 1, Date = "01-01-2001", NumAdults = 3, NumChildren = 0, TotalPrice = 75.00m}
+                    };
+                    context.Bookings.AddRange(bookings);
+                    context.Carts.FirstOrDefault().Bookings.AddRange(bookings);
+
+                    foreach (var booking in bookings)
+                    {
+                        var park = context.Parks.FirstOrDefault(p => p.Id == booking.ParkId);
+                        park.Bookings.Add(booking);
+                    }
+                    context.SaveChanges();
+                }
+
+
             }
         }
     }
