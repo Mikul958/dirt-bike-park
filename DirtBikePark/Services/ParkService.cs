@@ -1,6 +1,7 @@
 using DirtBikePark.Data;
 using DirtBikePark.Interfaces;
 using DirtBikePark.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,14 +20,16 @@ namespace DirtBikePark.Services
         public Task<Park?> GetPark(int parkId)
 		{
             //var park = _parks.Find(p => p.Id == parkId);
-            var park = _context.Parks.Find(parkId);
+            var park = _context.Parks
+                .Include(p => p.Bookings)
+                .FirstOrDefault(p => p.Id == parkId);
             return Task.FromResult(park);
 		}
 		
 		public Task<IEnumerable<Park>> GetParks()
 		{
             //return Task.FromResult<IEnumerable<Park>>(_parks);
-            return Task.FromResult<IEnumerable<Park>>(_context.Parks);
+            return Task.FromResult<IEnumerable<Park>>(_context.Parks.Include(p => p.Bookings));
 
         }
 
