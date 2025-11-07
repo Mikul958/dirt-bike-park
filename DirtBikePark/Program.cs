@@ -24,6 +24,8 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 // Build the app.
 WebApplication app = builder.Build();
 
+DataSeeder.Seed(app);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
