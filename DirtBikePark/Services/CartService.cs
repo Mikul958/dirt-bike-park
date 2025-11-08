@@ -14,25 +14,24 @@ namespace DirtBikePark.Services
         }
         public Task<Cart> GetCart(Guid? cartId)
         {
-            // TODO call DatabaseContext and implement logic there.
-
+            // If a cartId was not provided, generate a new Guid and assign it
+            if (cartId == null)
+                cartId = Guid.NewGuid();
+            
+            // Retrieve the cart with the given ID from the database if it exists
             var cart = _context.Carts
                 .Include(c => c.Bookings)
                 .FirstOrDefault(c => c.Id == cartId);
 
-            //Cart mockCart = new Cart();
-            //mockCart.Id = Guid.NewGuid();
+            // If not, create a cart with the new Guid and save it to the database
+            if (cart == null)
+            {
+                cart = new Cart();
+                cart.Id = (Guid)cartId;
 
-            //Booking mockBooking = new Booking();
-            //mockBooking.Id = 10;
-            //mockBooking.CartId = mockCart.Id;
-            //mockBooking.ParkId = 100;
-            //mockBooking.Date = "01-01-2001";
-            //mockBooking.NumAdults = 2;
-            //mockBooking.NumChildren = 0;
-            //mockBooking.TotalPrice = 10.98m;
-
-            //mockCart.Bookings.Add(mockBooking);
+                _context.Carts.Add(cart);
+                _context.SaveChanges();
+            }
 
             return Task.FromResult(cart);
         }

@@ -12,14 +12,13 @@ namespace DirtBikePark.Services
     {
 
 		private readonly DatabaseContext _context;
-
         public ParkService(DatabaseContext context)
         {
 			_context = context;
         }
+
         public Task<Park?> GetPark(int parkId)
 		{
-            //var park = _parks.Find(p => p.Id == parkId);
             var park = _context.Parks
                 .Include(p => p.Bookings)
                 .FirstOrDefault(p => p.Id == parkId);
@@ -28,45 +27,38 @@ namespace DirtBikePark.Services
 		
 		public Task<IEnumerable<Park>> GetParks()
 		{
-            //return Task.FromResult<IEnumerable<Park>>(_parks);
             return Task.FromResult<IEnumerable<Park>>(_context.Parks.Include(p => p.Bookings));
-
         }
 
         public Task<bool> AddPark(Park park)
         {
+            // Validate that the park exists and it has been created with a name
             if (park == null)
                 return Task.FromResult(false);
-
             if (string.IsNullOrWhiteSpace(park.Name))
                 return Task.FromResult(false);
 
-            int assignedId;
-            //if (park.Id > 0 && !_parks.Any(p => p.Id == park.Id))
-            //	assignedId = park.Id;
-            //else
-            //	assignedId = _parks.Any() ? _parks.Max(p => p.Id) + 1 : 1;
-
-            if (park.Id > 0 && !_context.Parks.Any(p => p.Id == park.Id))
-                assignedId = park.Id;
-            else
-                assignedId = _context.Parks.Any() ? _context.Parks.Max(p => p.Id) + 1 : 1;
-
-            park.Id = assignedId;
-			//_parks.Add(park);
+            // Wipe ID field (0 is default) so that the database can generate an ID automatically
+            park.Id = 0;
+			
+            // Add the new park to the database
 			_context.Parks.Add(park);
             _context.SaveChanges();
-
-            return Task.FromResult(true);  // return success
+            return Task.FromResult(true);
 		}
 		
 		public Task<bool> RemovePark(int parkId)
 		{
-			//var park = _parks.FirstOrDefault(p => p.Id == parkId);
-			var park = _context.Parks.FirstOrDefault(p => p.Id == parkId);
+            // Reject if ID is invalid
+            if (parkId < 0)
+                return Task.FromResult(false);
+
+            // Check if there is a park in the database with the given ID and return failure if not
+            var park = _context.Parks.FirstOrDefault(p => p.Id == parkId);
 			if (park == null)
 				return Task.FromResult(false);
-			//_parks.Remove(park);
+			
+            // Remove the park from the database
 			_context.Parks.Remove(park);
 			_context.SaveChanges();
 			return Task.FromResult(true);
