@@ -8,6 +8,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IParkService, ParkService>();
 
