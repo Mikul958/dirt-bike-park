@@ -9,7 +9,7 @@ namespace DirtBikePark.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [ForeignKey("Cart")]
-        public Guid CartId { get; set; }
+        public Guid? CartId { get; set; }
         [ForeignKey("Park")]
         public int ParkId { get; set; }
         public string Date { get; set; } = string.Empty;

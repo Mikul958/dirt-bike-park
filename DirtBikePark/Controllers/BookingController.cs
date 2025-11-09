@@ -17,42 +17,37 @@ namespace DirtBikePark.Controllers
 
         // GET /api/booking
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<Booking>>> GetBookings()
+        public async Task<IActionResult> GetBookings()
         {
-            var items = await _bookingService.GetBookingsAsync();
+            var items = await _bookingService.GetBookings();
             return Ok(items);
         }
 
         // GET /api/booking/park/{parkId}
         // (Your "GetBooking(parkId)" that returns a LIST)
         [HttpGet("park/{parkId:int}")]
-        public async Task<ActionResult<IReadOnlyList<Booking>>> GetBooking([FromRoute] int parkId)
+        public async Task<IActionResult> GetBooking([FromRoute] int parkId)
         {
-            var items = await _bookingService.GetBookingsByParkAsync(parkId);
+            var items = await _bookingService.GetBooking(parkId);
             return Ok(items);
         }
 
         // POST /api/booking/park/{parkId}
         [HttpPost("park/{parkId:int}")]
-        public async Task<ActionResult<Booking>> CreateBooking([FromRoute] int parkId, [FromBody] Booking booking)
+        public async Task<IActionResult> CreateBooking([FromRoute] int parkId, [FromBody] Booking booking)
         {
             // Ignore incoming Id; server assigns
             booking.Id = 0;
 
-            var created = await _bookingService.CreateBookingAsync(parkId, booking);
-
-            return CreatedAtAction(
-                nameof(GetBooking),
-                new { parkId = parkId },
-                created
-            );
+            var created = await _bookingService.CreateBooking(booking);
+            return Ok(created);
         }
 
         // DELETE /api/booking/{bookingId}
         [HttpDelete("{bookingId:int}")]
         public async Task<IActionResult> RemoveBooking([FromRoute] int bookingId)
         {
-            var ok = await _bookingService.RemoveBookingAsync(bookingId);
+            var ok = await _bookingService.RemoveBooking(bookingId);
             return ok ? NoContent() : NotFound();
         }
     }

@@ -1,38 +1,85 @@
-﻿using DirtBikePark.Interfaces;
+﻿using DirtBikePark.Data;
+using DirtBikePark.Interfaces;
 using DirtBikePark.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DirtBikePark.Services
 {
     public class CartService : ICartService
     {
+        private readonly DatabaseContext _context;
+        public CartService(DatabaseContext context)
+        {
+            _context = context;
+        }
         public Task<Cart> GetCart(Guid? cartId)
         {
-            // TODO call DatabaseContext and implement logic there.
+            // If a cartId was not provided, generate a new Guid and assign it
+            if (cartId == null)
+                cartId = Guid.NewGuid();
+            
+            // Retrieve the cart with the given ID from the database if it exists
+            var cart = _context.Carts
+                .Include(c => c.Bookings)
+                .FirstOrDefault(c => c.Id == cartId);
 
-            Cart mockCart = new Cart();
-            mockCart.Id = Guid.NewGuid();
+            // If not, create a cart with the new Guid and save it to the database
+            if (cart == null)
+            {
+                cart = new Cart();
+                cart.Id = (Guid)cartId;
 
-            Booking mockBooking = new Booking();
-            mockBooking.Id = 10;
-            mockBooking.CartId = mockCart.Id;
-            mockBooking.ParkId = 100;
-            mockBooking.Date = "01-01-2001";
-            mockBooking.NumAdults = 2;
-            mockBooking.NumChildren = 0;
-            mockBooking.TotalPrice = 10.98m;
+                _context.Carts.Add(cart);
+                _context.SaveChanges();
+            }
 
-            mockCart.Bookings.Add(mockBooking);
-
-            return Task.FromResult(mockCart);
+            return Task.FromResult(cart);
         }
 
         public Task<bool> AddBookingToCart(Guid cartId, int parkId, Booking bookingInfo)
         {
+            var cart = _context.Carts
+                .Include(c => c.Bookings)
+                .FirstOrDefault(c => c.Id == cartId);
+
+            if (cart == null)
+                return Task.FromResult(false);
+
+            if (_context.Parks.Find(parkId) == null)
+                return Task.FromResult(false);
+
+            if (bookingInfo == null)
+                return Task.FromResult(false);
+
+            bookingInfo.CartId = cartId;
+            bookingInfo.ParkId = parkId;
+
+           
+            cart.Bookings.Add(bookingInfo);
+            _context.Bookings.Add(bookingInfo);  // Might delete later after merge with BookingService Class implemented
+            _context.SaveChanges();
+
+            // Maybe add more sanity checks to ensure that the same booking hasn't been made in the same cart
+
             return Task.FromResult(true);
         }
         public Task<bool> RemoveBookingFromCart(Guid cartId, int bookingId)
         {
-            return Task.FromResult(false);
+            var cart = _context.Carts
+                .Include(c => c.Bookings)
+                .FirstOrDefault(c => c.Id == cartId);
+            if (cart == null)
+                return Task.FromResult(false);
+
+            var booking = cart.Bookings.Find(b => b.Id == bookingId);
+            if (booking == null)
+                return Task.FromResult(false);
+
+            cart.Bookings.Remove(booking);
+            booking.CartId = Guid.Empty; // Maybe make this id nullable?
+            _context.SaveChanges();
+
+            return Task.FromResult(true);
         }
     }
 }
