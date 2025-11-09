@@ -12,6 +12,7 @@ namespace DirtBikePark.Services
         {
             _context = context;
         }
+
         public Task<Cart> GetCart(Guid? cartId)
         {
             // If a cartId was not provided, generate a new Guid and assign it

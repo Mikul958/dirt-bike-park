@@ -17,11 +17,14 @@ namespace DirtBikePark.Controllers
 
         // GET {protocol}://{urlBase}/api/cart/{cartId}
         [HttpGet("{cartId}")]
-        public async Task<IActionResult> GetCart([FromRoute] string cartId)
+        public async Task<IActionResult> GetCart([FromRoute] string? cartId)
         {
-            Guid processedCartId;
-            if (!Guid.TryParse(cartId, out processedCartId))
+            // Verify that the provided Guid is valid (if it isn't null)
+            Guid processedCartId = Guid.Empty;
+            if (cartId != null && !Guid.TryParse(cartId, out processedCartId))
                 return BadRequest("Could not find a cart with the provided cart ID");
+
+            // Retrieve cart through service
             Cart cart = await _cartService.GetCart(processedCartId);
             return Ok(cart);
         }
@@ -30,9 +33,12 @@ namespace DirtBikePark.Controllers
         [HttpPost("{cartId}/add")]
         public async Task<IActionResult> AddBookingToCart([FromRoute] string cartId, [FromQuery] int parkId, [FromQuery] int bookingId)
         {
+            // Verify that provided Guid is valid
             Guid processedCartId;
             if (!Guid.TryParse(cartId, out processedCartId))
                 return BadRequest("Could not find a cart with the provided cart ID");
+
+            // Link booking to cart through service
             bool addStatus = await _cartService.AddBookingToCart(processedCartId, parkId, bookingId);
             return Ok(addStatus);
         }
@@ -41,9 +47,12 @@ namespace DirtBikePark.Controllers
         [HttpPut("{cartId}/remove")]
         public async Task<IActionResult> RemoveBookingFromCart([FromRoute] string cartId, [FromQuery] int bookingId)
         {
+            // Verify that provided Guid is valid
             Guid processedCartId;
             if (!Guid.TryParse(cartId, out processedCartId))
                 return BadRequest("Could not find a cart with the provided cart ID");
+
+            // Remove link between booking and cart through service
             bool removeStatus = await _cartService.RemoveBookingFromCart(processedCartId, bookingId);
             return Ok(removeStatus);
         }
