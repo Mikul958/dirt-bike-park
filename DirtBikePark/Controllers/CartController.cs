@@ -28,12 +28,12 @@ namespace DirtBikePark.Controllers
 
         // POST {protocol}://{urlBase}/api/cart/{cartId}/add?parkId={parkId} -- bookingInfo sent in request body
         [HttpPost("{cartId}/add")]
-        public async Task<IActionResult> AddBookingToCart([FromRoute] string cartId, [FromQuery] int parkId, [FromBody] Booking bookingInfo)
+        public async Task<IActionResult> AddBookingToCart([FromRoute] string cartId, [FromQuery] int parkId, [FromQuery] int bookingId)
         {
             Guid processedCartId;
             if (!Guid.TryParse(cartId, out processedCartId))
                 return BadRequest("Could not find a cart with the provided cart ID");
-            bool addStatus = await _cartService.AddBookingToCart(processedCartId, parkId, bookingInfo);
+            bool addStatus = await _cartService.AddBookingToCart(processedCartId, parkId, bookingId);
             return Ok(addStatus);
         }
 
