@@ -22,6 +22,7 @@ namespace Tests
 
             Assert.NotNull(park);
             Assert.IsType<Park>(park);
+            Assert.NotEqual(emptyPark, park);
         }
 
         [Fact]
