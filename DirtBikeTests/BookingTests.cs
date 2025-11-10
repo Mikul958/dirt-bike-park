@@ -119,6 +119,13 @@ namespace Tests
                .Options;
 
             var booking = new Booking { Id = 11, CartId = null, ParkId = 1, Date = "01-01-2001", NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m };
+            var park = new Park { Id = 1, Name = "Park One", Description = "There are a lot of trees.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m };
+
+            using (var context = new DatabaseContext(options))
+            {
+                context.Parks.Add(park);
+                context.SaveChanges();
+            }
 
             var bookingService = new BookingService(new DatabaseContext(options));
 
@@ -146,10 +153,10 @@ namespace Tests
 
             var bookingService = new BookingService(new DatabaseContext(options));
 
-            bool isAdded = await bookingService.RemoveBooking(11);
+            bool isRemoved = await bookingService.RemoveBooking(11);
             List<Booking> resultBooking = await bookingService.GetBooking(1);
 
-            Assert.True(isAdded);
+            Assert.True(isRemoved);
             Assert.Empty(resultBooking);
         }
 

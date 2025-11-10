@@ -23,7 +23,7 @@ namespace Tests
             Assert.IsType<Cart>(cart);
             Assert.NotEqual(emptyCart, cart);
         }
-        
+
         [Fact]
         public async Task Can_Get_A_Cart_With_Valid_Guid()
         {
@@ -49,7 +49,7 @@ namespace Tests
             Assert.NotNull(resultCart);
             Assert.Equal(guid, resultCart.Id);
         }
-        
+
         [Fact]
         public async Task Cannot_Get_A_Cart_With_Invalid_Guid()
         {
@@ -75,7 +75,7 @@ namespace Tests
             //Assert
             Assert.NotEqual(Guid.Empty, resultCart.Id);
         }
-        
+
         [Fact]
         public async Task Can_Get_Add_Booking_To_Cart()
         {
@@ -87,12 +87,11 @@ namespace Tests
             var park = new Park { Id = 3, Name = "Park Three", Description = "It's pretty green.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m };
             var guid = Guid.NewGuid();
             var cart = new Cart { Id = guid };
-            var booking = new Booking { Id = 10, CartId = Guid.Empty, ParkId = 3, Date = "01-01-2001", NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
+            var booking = new Booking { Id = 10, CartId = null, ParkId = 3, Date = "01-01-2001", NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
 
 
             using (var context = new DatabaseContext(options))
             {
-
                 context.Bookings.Add(booking);
                 context.Carts.Add(cart);
                 context.Parks.Add(park);
@@ -101,62 +100,58 @@ namespace Tests
 
             var cartService = new CartService(new DatabaseContext(options));
 
-            bool isAdded = await cartService.AddBookingToCart(guid, 3, booking);
-
-            //Assert
-
-            //foreach (var expectedBooking in booking)
-            //{
-            //    var actualBooking = resultBooking.FirstOrDefault(booking => booking.Id == expectedBooking.Id);
-            //    Assert.NotNull(actualBooking);
-            //    Assert.Equal(expectedBooking.NumAdults, actualBooking.NumAdults);
-            //}
-        }
-
-        /*
-        [Fact]
-        public async Task Can_Add_Booking()
-        {
-            var options = new DbContextOptionsBuilder<DatabaseContext>()
-               .UseInMemoryDatabase(databaseName: Guid.NewGuid()
-               .ToString())
-               .Options;
-
-            var booking = new Booking { Id = 11, CartId = null, ParkId = 1, Date = "01-01-2001", NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m };
-
-            var bookingService = new BookingService(new DatabaseContext(options));
-
-            bool isAdded = await bookingService.CreateBooking(booking);
+            bool isAdded = await cartService.AddBookingToCart(guid, 3, 10);
 
             //Assert
             Assert.True(isAdded);
+            using (var context = new DatabaseContext(options))
+            {
+                var retrivedCart = context.Carts
+                    .Include(cart => cart.Bookings)
+                    .FirstOrDefault();
+                Assert.Equal(guid, retrivedCart.Bookings.First().CartId);
+
+            }
         }
 
         [Fact]
-        public async Task Can_Remove_Booking()
+        public async Task Can_Remove_Booking_From_Cart()
         {
             var options = new DbContextOptionsBuilder<DatabaseContext>()
-               .UseInMemoryDatabase(databaseName: Guid.NewGuid()
-               .ToString())
-               .Options;
+                             .UseInMemoryDatabase(databaseName: Guid.NewGuid()
+                             .ToString())
+                             .Options;
 
-            var booking = new Booking { Id = 11, CartId = null, ParkId = 1, Date = "01-01-2001", NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m };
+            var park = new Park { Id = 3, Name = "Park Three", Description = "It's pretty green.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m };
+            var guid = Guid.NewGuid();
+            var cart = new Cart { Id = guid };
+            var booking = new Booking { Id = 10, CartId = guid, ParkId = 3, Date = "01-01-2001", NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
+
 
             using (var context = new DatabaseContext(options))
             {
                 context.Bookings.Add(booking);
+                context.Carts.Add(cart);
+                context.Parks.Add(park);
                 context.SaveChanges();
             }
 
-            var bookingService = new BookingService(new DatabaseContext(options));
+            var cartService = new CartService(new DatabaseContext(options));
 
-            bool isAdded = await bookingService.RemoveBooking(11);
-            List<Booking> resultBooking = await bookingService.GetBooking(1);
+            bool isRemoved = await cartService.RemoveBookingFromCart(guid, 10);
 
-            Assert.True(isAdded);
-            Assert.Empty(resultBooking);
+            //Assert
+            Assert.True(isRemoved);
+            using (var context = new DatabaseContext(options))
+            {
+                var retrivedCart = context.Carts
+                    .Include(cart => cart.Bookings)
+                    .FirstOrDefault();
+                Assert.Empty(retrivedCart.Bookings);
+
+            }
+
         }
-        */
     }
 }
 
