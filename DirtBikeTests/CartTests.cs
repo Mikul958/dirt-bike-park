@@ -109,8 +109,9 @@ namespace Tests
                 var retrivedCart = context.Carts
                     .Include(cart => cart.Bookings)
                     .FirstOrDefault();
+                if (retrivedCart == null)
+                    Assert.Fail();
                 Assert.Equal(guid, retrivedCart.Bookings.First().CartId);
-
             }
         }
 
@@ -147,10 +148,10 @@ namespace Tests
                 var retrivedCart = context.Carts
                     .Include(cart => cart.Bookings)
                     .FirstOrDefault();
+                if (retrivedCart == null)
+                    Assert.Fail();
                 Assert.Empty(retrivedCart.Bookings);
-
             }
-
         }
     }
 }
