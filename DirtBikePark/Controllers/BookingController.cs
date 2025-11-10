@@ -36,9 +36,6 @@ namespace DirtBikePark.Controllers
         [HttpPost("park/{parkId:int}")]
         public async Task<IActionResult> CreateBooking([FromRoute] int parkId, [FromBody] Booking booking)
         {
-            // Ignore incoming Id; server assigns
-            booking.Id = 0;
-
             var created = await _bookingService.CreateBooking(booking);
             return Ok(created);
         }

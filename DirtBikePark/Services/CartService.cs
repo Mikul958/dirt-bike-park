@@ -12,6 +12,7 @@ namespace DirtBikePark.Services
         {
             _context = context;
         }
+
         public Task<Cart> GetCart(Guid? cartId)
         {
             // If a cartId was not provided, generate a new Guid and assign it
@@ -36,47 +37,37 @@ namespace DirtBikePark.Services
             return Task.FromResult(cart);
         }
 
-        public Task<bool> AddBookingToCart(Guid cartId, int parkId, Booking bookingInfo)
+        public Task<bool> AddBookingToCart(Guid cartId, int parkId, int bookingId)
         {
-            var cart = _context.Carts
-                .Include(c => c.Bookings)
-                .FirstOrDefault(c => c.Id == cartId);
-
-            if (cart == null)
+            // Check that the provided park exists
+            if (!_context.Parks.Where(park => park.Id == parkId).Any())
                 return Task.FromResult(false);
 
-            if (_context.Parks.Find(parkId) == null)
+            // Check that the provided booking exists and is not already in a cart
+            Booking? retrievedBooking = _context.Bookings.Find(bookingId);
+            if (retrievedBooking == null || retrievedBooking.CartId != null)
                 return Task.FromResult(false);
 
-            if (bookingInfo == null)
+            // Check that the provided cart exists
+            if (!_context.Carts.Where(cart => cart.Id == cartId).Any())
                 return Task.FromResult(false);
 
-            bookingInfo.CartId = cartId;
-            bookingInfo.ParkId = parkId;
-
-           
-            cart.Bookings.Add(bookingInfo);
-            _context.Bookings.Add(bookingInfo);  // Might delete later after merge with BookingService Class implemented
+            // Update parkId and cartId with provided values
+            retrievedBooking.CartId = cartId;
+            retrievedBooking.ParkId = parkId;
             _context.SaveChanges();
-
-            // Maybe add more sanity checks to ensure that the same booking hasn't been made in the same cart
 
             return Task.FromResult(true);
         }
         public Task<bool> RemoveBookingFromCart(Guid cartId, int bookingId)
         {
-            var cart = _context.Carts
-                .Include(c => c.Bookings)
-                .FirstOrDefault(c => c.Id == cartId);
-            if (cart == null)
+            // Check that the provided booking exists and is already in the provided cart
+            Booking? retrievedBooking = _context.Bookings.Find(bookingId);
+            if (retrievedBooking == null || retrievedBooking.CartId != cartId)
                 return Task.FromResult(false);
 
-            var booking = cart.Bookings.Find(b => b.Id == bookingId);
-            if (booking == null)
-                return Task.FromResult(false);
-
-            cart.Bookings.Remove(booking);
-            booking.CartId = Guid.Empty; // Maybe make this id nullable?
+            // Wipe the cartId to break the link between booking and cart
+            retrievedBooking.CartId = null;
             _context.SaveChanges();
 
             return Task.FromResult(true);
