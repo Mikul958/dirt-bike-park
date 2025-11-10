@@ -33,8 +33,13 @@ namespace DirtBikePark.Services
 
         public Task<bool> CreateBooking(Booking booking)
         {
-            // Wipe ID field so that the database can generate an ID automatically
+            // Check if a park with the given parkID exists in the database
+            if (!_context.Parks.Where(park => park.Id == booking.ParkId).Any())
+                return Task.FromResult(false);
+            
+            // Wipe ID field so that the database can generate an ID automatically and cartID field
             booking.Id = 0;
+            booking.CartId = null;
 
             // Add the booking to the database
             _context.Bookings.Add(booking);

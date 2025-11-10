@@ -44,6 +44,7 @@ namespace DirtBikePark.Services
             // Add the new park to the database
 			_context.Parks.Add(park);
             _context.SaveChanges();
+
             return Task.FromResult(true);
 		}
 		
@@ -54,13 +55,17 @@ namespace DirtBikePark.Services
                 return Task.FromResult(false);
 
             // Check if there is a park in the database with the given ID and return failure if not
-            var park = _context.Parks.FirstOrDefault(p => p.Id == parkId);
+            Park? park = _context.Parks
+                .Include(park => park.Bookings)
+                .FirstOrDefault(p => p.Id == parkId);
 			if (park == null)
 				return Task.FromResult(false);
-			
-            // Remove the park from the database
-			_context.Parks.Remove(park);
+
+            // Remove the park and associated bookings from the database
+            _context.Bookings.RemoveRange(park.Bookings);
+            _context.Parks.Remove(park);
 			_context.SaveChanges();
+
 			return Task.FromResult(true);
 		}
 	}
