@@ -8,33 +8,33 @@ namespace DirtBikePark.Services
 {
     public class BookingService : IBookingService
     {
-        private readonly DatabaseContext _context;
-        public BookingService(DatabaseContext context)
+        private readonly IBookingRepository _bookingRepository;
+        private readonly IParkRepository _parkRepository;
+        public BookingService(IBookingRepository bookingRepository, IParkRepository parkRepository)
         {
-            _context = context;
+            _bookingRepository = bookingRepository;
+            _parkRepository = parkRepository;
         }
 
-        public Task<List<Booking>> GetBookings()
+        public Task<IEnumerable<Booking>> GetBookings()
         {
             // Retrieve all finalized bookings from the database with no respect to cart or park
-            List<Booking> bookings = _context.Bookings
-                .ToList();
+            var bookings = _bookingRepository.GetBookings();
             return Task.FromResult(bookings);
         }
 
-        public Task<List<Booking>> GetBooking(int parkId)
+        public Task<IEnumerable<Booking>> GetBooking(int parkId)
         {
             // Retrieve all finalized bookings with the given park ID
-            List<Booking> bookingsWithPark = _context.Bookings
-                .Where(booking => booking.ParkId == parkId)
-                .ToList();
+            var bookingsWithPark = _bookingRepository.GetBookingsByPark(parkId);
             return Task.FromResult(bookingsWithPark);
         }
 
         public Task<bool> CreateBooking(Booking booking)
         {
+
             // Check if a park with the given parkID exists in the database
-            if (!_context.Parks.Where(park => park.Id == booking.ParkId).Any())
+            if(_parkRepository.GetPark(booking.ParkId) == null)
                 return Task.FromResult(false);
             
             // Wipe ID field so that the database can generate an ID automatically and cartID field
@@ -42,8 +42,8 @@ namespace DirtBikePark.Services
             booking.CartId = null;
 
             // Add the booking to the database
-            _context.Bookings.Add(booking);
-            _context.SaveChanges();
+            _bookingRepository.AddBooking(booking);
+            _bookingRepository.Save();
             return Task.FromResult(true);
         }
 
@@ -53,14 +53,14 @@ namespace DirtBikePark.Services
             if (bookingId < 0)
                 return Task.FromResult(false);
 
-            // Check if there is a park in the database with the given ID and return failure if not
-            Booking? booking = _context.Bookings.FirstOrDefault(booking => booking.Id == bookingId);
+            // Check if there is a booking in the database with the given ID and return failure if not
+            Booking? booking = _bookingRepository.GetBooking(bookingId);
             if (booking == null)
                 return Task.FromResult(false);
 
             // Remove the booking from the database
-            _context.Bookings.Remove(booking);
-            _context.SaveChanges();
+            _bookingRepository.RemoveBooking(booking);
+            _bookingRepository.Save();
             return Task.FromResult(true);
         }
     }
