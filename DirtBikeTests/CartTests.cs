@@ -40,8 +40,13 @@ namespace Tests
                 context.Carts.Add(cart);
                 context.SaveChanges();
             }
-
-            var cartService = new CartService(new DatabaseContext(options));
+            
+            var parkRepository = new ParkRepository(new DatabaseContext(options));
+            var bookingRepository = new BookingRepository(new DatabaseContext(options));
+            var cartRepository = new CartRepository(new DatabaseContext(options));
+            var parkService = new ParkService(parkRepository);
+            var bookingService = new BookingService(bookingRepository, parkRepository);
+            var cartService = new CartService(cartRepository,bookingRepository,parkRepository);
 
             Cart resultCart = await cartService.GetCart(guid);
 
@@ -68,7 +73,12 @@ namespace Tests
                 context.SaveChanges();
             }
 
-            var cartService = new CartService(new DatabaseContext(options));
+            var parkRepository = new ParkRepository(new DatabaseContext(options));
+            var bookingRepository = new BookingRepository(new DatabaseContext(options));
+            var cartRepository = new CartRepository(new DatabaseContext(options));
+            var parkService = new ParkService(parkRepository);
+            var bookingService = new BookingService(bookingRepository, parkRepository);
+            var cartService = new CartService(cartRepository, bookingRepository, parkRepository);
 
             Cart resultCart = await cartService.GetCart(Guid.Empty);
 
@@ -98,7 +108,12 @@ namespace Tests
                 context.SaveChanges();
             }
 
-            var cartService = new CartService(new DatabaseContext(options));
+            var parkRepository = new ParkRepository(new DatabaseContext(options));
+            var bookingRepository = new BookingRepository(new DatabaseContext(options));
+            var cartRepository = new CartRepository(new DatabaseContext(options));
+            var parkService = new ParkService(parkRepository);
+            var bookingService = new BookingService(bookingRepository, parkRepository);
+            var cartService = new CartService(cartRepository, bookingRepository, parkRepository);
 
             bool isAdded = await cartService.AddBookingToCart(guid, 3, 10);
 
@@ -137,7 +152,12 @@ namespace Tests
                 context.SaveChanges();
             }
 
-            var cartService = new CartService(new DatabaseContext(options));
+            var parkRepository = new ParkRepository(new DatabaseContext(options));
+            var bookingRepository = new BookingRepository(new DatabaseContext(options));
+            var cartRepository = new CartRepository(new DatabaseContext(options));
+            var parkService = new ParkService(parkRepository);
+            var bookingService = new BookingService(bookingRepository, parkRepository);
+            var cartService = new CartService(cartRepository, bookingRepository, parkRepository);
 
             bool isRemoved = await cartService.RemoveBookingFromCart(guid, 10);
 

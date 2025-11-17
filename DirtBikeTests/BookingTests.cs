@@ -41,9 +41,12 @@ namespace Tests
                 context.SaveChanges();
             }
 
-            var bookingService = new BookingService(new DatabaseContext(options));
+            var parkRepository = new ParkRepository(new DatabaseContext(options));
+            var bookingRepository = new BookingRepository(new DatabaseContext(options));
+            var parkService = new ParkService(parkRepository);
+            var bookingService = new BookingService(bookingRepository, parkRepository);
 
-            List<Booking> resultBooking = await bookingService.GetBooking(3);
+            var resultBooking = await bookingService.GetBooking(3);
 
             //Assert
             Assert.NotNull(resultBooking);
@@ -66,9 +69,12 @@ namespace Tests
                 context.SaveChanges();
             }
 
-            var bookingService = new BookingService(new DatabaseContext(options));
+            var parkRepository = new ParkRepository(new DatabaseContext(options));
+            var bookingRepository = new BookingRepository(new DatabaseContext(options));
+            var parkService = new ParkService(parkRepository);
+            var bookingService = new BookingService(bookingRepository, parkRepository);
 
-            List<Booking> resultBooking = await bookingService.GetBooking(5);
+            var resultBooking = await bookingService.GetBooking(5);
 
             //Assert
             Assert.Empty(resultBooking);
@@ -95,9 +101,12 @@ namespace Tests
                 context.SaveChanges();
             }
 
-            var bookingService = new BookingService(new DatabaseContext(options));
+            var parkRepository = new ParkRepository(new DatabaseContext(options));
+            var bookingRepository = new BookingRepository(new DatabaseContext(options));
+            var parkService = new ParkService(parkRepository);
+            var bookingService = new BookingService(bookingRepository, parkRepository);
 
-            List<Booking> resultBooking = await bookingService.GetBookings();
+            var resultBooking = await bookingService.GetBookings();
 
             //Assert
 
@@ -127,7 +136,10 @@ namespace Tests
                 context.SaveChanges();
             }
 
-            var bookingService = new BookingService(new DatabaseContext(options));
+            var parkRepository = new ParkRepository(new DatabaseContext(options));
+            var bookingRepository = new BookingRepository(new DatabaseContext(options));
+            var parkService = new ParkService(parkRepository);
+            var bookingService = new BookingService(bookingRepository, parkRepository);
 
             bool isAdded = await bookingService.CreateBooking(booking);
 
@@ -151,10 +163,13 @@ namespace Tests
                context.SaveChanges();
             }
 
-            var bookingService = new BookingService(new DatabaseContext(options));
+            var parkRepository = new ParkRepository(new DatabaseContext(options));
+            var bookingRepository = new BookingRepository(new DatabaseContext(options));
+            var parkService = new ParkService(parkRepository);
+            var bookingService = new BookingService(bookingRepository, parkRepository);
 
             bool isRemoved = await bookingService.RemoveBooking(11);
-            List<Booking> resultBooking = await bookingService.GetBooking(1);
+            var resultBooking = await bookingService.GetBooking(1);
 
             Assert.True(isRemoved);
             Assert.Empty(resultBooking);
