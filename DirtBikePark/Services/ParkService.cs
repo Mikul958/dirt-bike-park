@@ -11,23 +11,21 @@ namespace DirtBikePark.Services
 	public class ParkService : IParkService
     {
 
-		private readonly DatabaseContext _context;
-        public ParkService(DatabaseContext context)
+		private readonly IParkRepository _parkRepository;
+        public ParkService(IParkRepository parkRepository)
         {
-			_context = context;
+			_parkRepository = parkRepository;
         }
 
         public Task<Park?> GetPark(int parkId)
 		{
-            var park = _context.Parks
-                .Include(p => p.Bookings)
-                .FirstOrDefault(p => p.Id == parkId);
+            var park = _parkRepository.GetPark(parkId);
             return Task.FromResult(park);
 		}
 		
 		public Task<IEnumerable<Park>> GetParks()
 		{
-            return Task.FromResult<IEnumerable<Park>>(_context.Parks.Include(p => p.Bookings));
+            return Task.FromResult(_parkRepository.GetParks());
         }
 
         public Task<bool> AddPark(Park park)
@@ -42,8 +40,8 @@ namespace DirtBikePark.Services
             park.Id = 0;
 			
             // Add the new park to the database
-			_context.Parks.Add(park);
-            _context.SaveChanges();
+			_parkRepository.AddPark(park);
+            _parkRepository.Save();
 
             return Task.FromResult(true);
 		}
@@ -55,16 +53,13 @@ namespace DirtBikePark.Services
                 return Task.FromResult(false);
 
             // Check if there is a park in the database with the given ID and return failure if not
-            Park? park = _context.Parks
-                .Include(park => park.Bookings)
-                .FirstOrDefault(p => p.Id == parkId);
+            Park? park = _parkRepository.GetPark(parkId);
 			if (park == null)
 				return Task.FromResult(false);
 
             // Remove the park and associated bookings from the database
-            _context.Bookings.RemoveRange(park.Bookings);
-            _context.Parks.Remove(park);
-			_context.SaveChanges();
+            _parkRepository.RemovePark(park);
+            _parkRepository.Save();
 
 			return Task.FromResult(true);
 		}
