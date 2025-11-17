@@ -5,7 +5,7 @@ namespace DirtBikePark.Data
 {
     public class BookingRepository : IBookingRepository
     {
-        private DatabaseContext _context { get; set; }
+        private readonly DatabaseContext _context;
         public BookingRepository(DatabaseContext context)
         {
             _context = context;
