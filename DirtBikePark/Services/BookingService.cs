@@ -30,6 +30,13 @@ namespace DirtBikePark.Services
                 .ToList();
             return Task.FromResult(bookingsWithPark);
         }
+        public Task<Booking?> GetBookingFromId(int bookingId)
+        {
+            // Retrieve finalized booking from its ID
+            Booking? bookingWithId = _context.Bookings
+                .FirstOrDefault(booking => booking.Id == bookingId);
+            return Task.FromResult(bookingWithId);
+        }
 
         public Task<bool> CreateBooking(Booking booking)
         {

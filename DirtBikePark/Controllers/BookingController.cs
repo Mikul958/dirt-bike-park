@@ -32,6 +32,17 @@ namespace DirtBikePark.Controllers
             return Ok(items);
         }
 
+        // GET /api/booking/{bookingId}
+        // ("GetBooking(bookingId)" that returns a singular booking with that Id)
+        [HttpGet("{bookingId:int}")]
+        public async Task<IActionResult> GetBookingFromId([FromRoute] int bookingId)
+        {
+            var booking = await _bookingService.GetBookingFromId(bookingId);
+            if (booking == null)
+                return NotFound($"No booking found with the ID of {bookingId}.");
+            return Ok(booking);
+        }
+
         // POST /api/booking/park/{parkId}
         [HttpPost("park/{parkId:int}")]
         public async Task<IActionResult> CreateBooking([FromRoute] int parkId, [FromBody] Booking booking)
