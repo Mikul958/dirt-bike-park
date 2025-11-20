@@ -11,6 +11,9 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IParkService, ParkService>();
+builder.Services.AddScoped<IParkRepository, ParkRepository>();
+builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 // Add Swagger services ({protocol}://{urlBase}/swagger).
 builder.Services.AddEndpointsApiExplorer();

@@ -41,7 +41,8 @@ namespace Tests
                 context.SaveChanges();
             }
 
-            var parkService = new ParkService(new DatabaseContext(options));
+            var parkRepository = new ParkRepository(new DatabaseContext(options));
+            var parkService = new ParkService(parkRepository);
 
             Park? resultPark = await parkService.GetPark(1);
 
@@ -67,7 +68,8 @@ namespace Tests
                 context.SaveChanges();
             }
 
-            var parkService = new ParkService(new DatabaseContext(options));
+            var parkRepository = new ParkRepository(new DatabaseContext(options));
+            var parkService = new ParkService(parkRepository);
 
             Park? resultPark = await parkService.GetPark(2);
 
@@ -95,7 +97,8 @@ namespace Tests
                 context.SaveChanges();
             }
 
-            var parkService = new ParkService(new DatabaseContext(options));
+            var parkRepository = new ParkRepository(new DatabaseContext(options));
+            var parkService = new ParkService(parkRepository);
 
             IEnumerable<Park> resultParks = await parkService.GetParks();
             
@@ -121,14 +124,15 @@ namespace Tests
                 .Options;
 
             var park = new Park { Id = 1, Name = "South Carolina Park", Bookings = new List<Booking>(), GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
-                  
+
             //using (var context = new DatabaseContext(options))
             //{
             //    context.Parks.AddRange(parks);
             //    context.SaveChanges();
             //}
 
-            var parkService = new ParkService(new DatabaseContext(options));
+            var parkRepository = new ParkRepository(new DatabaseContext(options));
+            var parkService = new ParkService(parkRepository);
 
             bool isAdded = await parkService.AddPark(park);
 
@@ -153,7 +157,8 @@ namespace Tests
                 context.SaveChanges();
             }
 
-            var parkService = new ParkService(new DatabaseContext(options));
+            var parkRepository = new ParkRepository(new DatabaseContext(options));
+            var parkService = new ParkService(parkRepository);
 
             bool isAdded = await parkService.RemovePark(1);
             Park? resultPark = await parkService.GetPark(1);
