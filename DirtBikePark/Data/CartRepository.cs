@@ -1,5 +1,6 @@
 ﻿using DirtBikePark.Interfaces;
 using DirtBikePark.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DirtBikePark.Data
 {
@@ -18,7 +19,9 @@ namespace DirtBikePark.Data
 
         public Cart? GetCart(Guid? cartId)
         {
-            return _context.Carts.FirstOrDefault(cart => cart.Id == cartId);
+            return _context.Carts
+                .Include(cart => cart.Bookings)
+                .FirstOrDefault(cart => cart.Id == cartId);
         }
 
         //public void RemoveCart(Guid cartId)
