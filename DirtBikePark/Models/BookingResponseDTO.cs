@@ -9,7 +9,7 @@
         public int NumChildren { get; set; }
         public decimal TotalPrice { get; set; }
 
-        // Creates a new BookingResponseDTO with information provided in a Booking
+        // Constructs a new BookingResponseDTO with information provided in a Booking
         public BookingResponseDTO(Booking bookingModel)
         {
             Id = bookingModel.Id;
@@ -20,8 +20,8 @@
             TotalPrice = bookingModel.TotalPrice;
         }
 
-        // Takes an existing BookingDTO and supplies it with information in a Booking
-        public BookingResponseDTO ToResponseDTO(Booking bookingModel)
+        // Takes an existing BookingResponseDTO and supplies it with information in a Booking
+        public void UpdateWith(Booking bookingModel)
         {
             Id = bookingModel.Id;
             Park = bookingModel.Park;
@@ -29,7 +29,6 @@
             NumAdults = bookingModel.NumAdults;
             NumChildren = bookingModel.NumChildren;
             TotalPrice = bookingModel.TotalPrice;
-            return this;
         }
     }
 }
