@@ -48,7 +48,7 @@ namespace Tests
             var parkService = new ParkService(parkRepository);
             var bookingService = new BookingService(bookingRepository, parkRepository);
 
-            var resultBooking = await bookingService.GetBooking(3);
+            var resultBooking = await bookingService.GetParkBookings(3);
 
             //Assert
             Assert.NotNull(resultBooking);
@@ -76,7 +76,7 @@ namespace Tests
             var parkService = new ParkService(parkRepository);
             var bookingService = new BookingService(bookingRepository, parkRepository);
 
-            var resultBooking = await bookingService.GetBooking(5);
+            var resultBooking = await bookingService.GetParkBookings(5);
 
             //Assert
             Assert.Empty(resultBooking);
@@ -177,7 +177,7 @@ namespace Tests
             var bookingService = new BookingService(bookingRepository, parkRepository);
 
             bool isRemoved = await bookingService.RemoveBooking(11);
-            var resultBooking = await bookingService.GetBooking(1);
+            var resultBooking = await bookingService.GetParkBookings(1);
 
             Assert.True(isRemoved);
             Assert.Empty(resultBooking);
