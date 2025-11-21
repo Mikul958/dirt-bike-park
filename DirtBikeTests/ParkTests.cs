@@ -17,7 +17,7 @@ namespace Tests
         public void Can_Create_Park()
         {
             var emptyPark = new Park();
-            var park = new Park { Id = 1, Name = "South Carolina Park", Bookings = new List<Booking>(), GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
+            var park = new Park { Id = 1, Name = "South Carolina Park", GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
 
 
             Assert.NotNull(park);
@@ -36,7 +36,7 @@ namespace Tests
 
             using (var context = new DatabaseContext(options))
             {
-                var park = new Park { Id = 1, Name = "South Carolina Park", Bookings = new List<Booking>(), GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
+                var park = new Park { Id = 1, Name = "South Carolina Park", GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
                 context.Parks.Add(park);
                 context.SaveChanges();
             }
@@ -63,7 +63,7 @@ namespace Tests
 
             using (var context = new DatabaseContext(options))
             {
-                var park = new Park { Id = 1, Name = "South Carolina Park", Bookings = new List<Booking>(), GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
+                var park = new Park { Id = 1, Name = "South Carolina Park", GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
                 context.Parks.Add(park);
                 context.SaveChanges();
             }
@@ -87,7 +87,7 @@ namespace Tests
 
             var parks = new List<Park>
                 {
-                    new Park { Id = 1, Name = "South Carolina Park", Bookings = new List<Booking>(), GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m },
+                    new Park { Id = 1, Name = "South Carolina Park", Location = "South Carolina", GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m },
                     new Park { Id = 2, Name = "Park Two", Description = "There is a river through the middle.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m }
                 };
 
@@ -123,7 +123,7 @@ namespace Tests
                 .ToString())
                 .Options;
 
-            var park = new Park { Id = 1, Name = "South Carolina Park", Bookings = new List<Booking>(), GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
+            var park = new Park { Id = 1, Name = "South Carolina Park", GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
 
             //using (var context = new DatabaseContext(options))
             //{
@@ -149,7 +149,7 @@ namespace Tests
                 .ToString())
                 .Options;
 
-            var park = new Park { Id = 1, Name = "South Carolina Park", Bookings = new List<Booking>(), GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
+            var park = new Park { Id = 1, Name = "South Carolina Park", GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
 
             using (var context = new DatabaseContext(options))
             {

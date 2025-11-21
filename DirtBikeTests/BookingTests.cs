@@ -36,6 +36,8 @@ namespace Tests
 
             using (var context = new DatabaseContext(options))
             {
+                var park = new Park { Id = 3, Name = "Test Park" };
+                context.Parks.Add(park);
                 var booking = new Booking { Id = 10, CartId = null, ParkId = 3, NumDays = 1, NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
                 context.Bookings.Add(booking);
                 context.SaveChanges();
@@ -87,16 +89,20 @@ namespace Tests
                  .ToString())
                  .Options;
 
+            var parks = new List<Park>
+                {
+                    new Park { Id = 1, Name = "Test Park"},
+                    new Park { Id = 3, Name = "Test Park 3"}
+                };
             var bookings = new List<Booking>
                 {
                     new Booking { Id = 10, CartId = null, ParkId = 3, NumDays = 2, NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m },
                     new Booking {Id = 11, CartId =null, ParkId = 1, NumDays = 1, NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m}
-
                 };
 
             using (var context = new DatabaseContext(options))
             {
-
+                context.Parks.AddRange(parks);
                 context.Bookings.AddRange(bookings);
                 context.SaveChanges();
             }
@@ -127,8 +133,8 @@ namespace Tests
                .ToString())
                .Options;
 
-            var booking = new Booking { Id = 11, CartId = null, ParkId = 1, NumDays = 1, NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m };
             var park = new Park { Id = 1, Name = "Park One", Description = "There are a lot of trees.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m };
+            var booking = new Booking { Id = 11, CartId = null, ParkId = 1, NumDays = 1, NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m };
 
             using (var context = new DatabaseContext(options))
             {
@@ -155,11 +161,13 @@ namespace Tests
                .ToString())
                .Options;
 
+            var park = new Park { Id = 1, Name = "Test Park" };
             var booking = new Booking { Id = 11, CartId = null, ParkId = 1, NumDays = 1, NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m };
 
             using (var context = new DatabaseContext(options))
             {
-               context.Bookings.Add(booking);
+                context.Parks.Add(park);
+                context.Bookings.Add(booking);
                context.SaveChanges();
             }
 
