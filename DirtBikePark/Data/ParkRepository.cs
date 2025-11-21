@@ -32,9 +32,10 @@ namespace DirtBikePark.Data
         public void RemovePark(Park park)
         {
             // Remove the park and associated bookings from the database
-            _context.Bookings
+            List<Booking> associatedBookings = _context.Bookings
                 .Where(booking => booking.ParkId == park.Id)
-                .ExecuteDelete();
+                .ToList();
+            _context.Bookings.RemoveRange(associatedBookings);
             _context.Parks.Remove(park);
         }
 
