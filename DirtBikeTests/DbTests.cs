@@ -88,7 +88,7 @@ namespace Tests
                 .ToString())
                 .Options;
 
-            Booking booking = new Booking { Id = 0, CartId = Guid.NewGuid(), ParkId = 1, Date = "01-01-2001", NumAdults = 10, NumChildren = 10, TotalPrice = 10.00m };
+            Booking booking = new Booking { Id = 0, CartId = Guid.NewGuid(), ParkId = 1, NumDays = 3, NumAdults = 10, NumChildren = 10, TotalPrice = 10.00m };
             Park park = new Park { Id = 1, Name = "South Carolina Park", Bookings = new List<Booking>(), GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
 
 

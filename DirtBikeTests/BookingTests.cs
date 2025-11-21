@@ -17,7 +17,7 @@ namespace Tests
         public void Can_Create_Booking()
         {
             var emptyBooking = new Booking();
-            var booking = new Booking { Id = 10, CartId = null, ParkId = 3, Date = "01-01-2001", NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
+            var booking = new Booking { Id = 10, CartId = null, ParkId = 3, NumDays = 3, NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
 
 
             Assert.NotNull(booking);
@@ -36,7 +36,7 @@ namespace Tests
 
             using (var context = new DatabaseContext(options))
             {
-                var booking = new Booking { Id = 10, CartId = null, ParkId = 3, Date = "01-01-2001", NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
+                var booking = new Booking { Id = 10, CartId = null, ParkId = 3, NumDays = 1, NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
                 context.Bookings.Add(booking);
                 context.SaveChanges();
             }
@@ -64,7 +64,7 @@ namespace Tests
 
             using (var context = new DatabaseContext(options))
             {
-                var booking = new Booking { Id = 10, CartId = null, ParkId = 3, Date = "01-01-2001", NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
+                var booking = new Booking { Id = 10, CartId = null, ParkId = 3, NumDays = 3, NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
                 context.Bookings.Add(booking);
                 context.SaveChanges();
             }
@@ -89,8 +89,8 @@ namespace Tests
 
             var bookings = new List<Booking>
                 {
-                    new Booking { Id = 10, CartId = null, ParkId = 3, Date = "01-01-2001", NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m },
-                    new Booking {Id = 11, CartId =null, ParkId = 1, Date = "01-01-2001", NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m}
+                    new Booking { Id = 10, CartId = null, ParkId = 3, NumDays = 2, NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m },
+                    new Booking {Id = 11, CartId =null, ParkId = 1, NumDays = 1, NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m}
 
                 };
 
@@ -127,7 +127,7 @@ namespace Tests
                .ToString())
                .Options;
 
-            var booking = new Booking { Id = 11, CartId = null, ParkId = 1, Date = "01-01-2001", NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m };
+            var booking = new Booking { Id = 11, CartId = null, ParkId = 1, NumDays = 1, NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m };
             var park = new Park { Id = 1, Name = "Park One", Description = "There are a lot of trees.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m };
 
             using (var context = new DatabaseContext(options))
@@ -155,7 +155,7 @@ namespace Tests
                .ToString())
                .Options;
 
-            var booking = new Booking { Id = 11, CartId = null, ParkId = 1, Date = "01-01-2001", NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m };
+            var booking = new Booking { Id = 11, CartId = null, ParkId = 1, NumDays = 1, NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m };
 
             using (var context = new DatabaseContext(options))
             {
