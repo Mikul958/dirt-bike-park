@@ -23,8 +23,13 @@
         // Takes an existing BookingDTO and supplies it with information in a Booking
         public BookingResponseDTO ToResponseDTO(Booking bookingModel)
         {
-            BookingResponseDTO bookingDTO = new BookingResponseDTO(bookingModel);
-            return bookingDTO;
+            Id = bookingModel.Id;
+            Park = bookingModel.Park;
+            NumDays = bookingModel.NumDays;
+            NumAdults = bookingModel.NumAdults;
+            NumChildren = bookingModel.NumChildren;
+            TotalPrice = bookingModel.TotalPrice;
+            return this;
         }
     }
 }
