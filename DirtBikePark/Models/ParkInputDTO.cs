@@ -10,20 +10,20 @@
         public decimal PricePerChild { get; set; }
         public int GuestLimit { get; set; }
 
-        // Creates a new Booking from the provided DTO information.
+        // Creates a new Park from information in the current DTO.
         // NOTE: Using this alone will create a new park. For PUTs, pass in the parkId of the park to update to the controller.
-        public Park FromInputDTO(ParkInputDTO parkDTO)
+        public Park FromInputDTO()
         {
             Park parkModel = new Park()
             {
                 Id = 0,
-                Name = parkDTO.Name,
-                Location = parkDTO.Location,
-                Description = parkDTO.Description,
-                ImageUrl = parkDTO.ImageUrl,
-                PricePerAdult = parkDTO.PricePerAdult,
-                PricePerChild = parkDTO.PricePerChild,
-                GuestLimit = parkDTO.GuestLimit
+                Name = this.Name,
+                Location = this.Location,
+                Description = this.Description,
+                ImageUrl = this.ImageUrl,
+                PricePerAdult = this.PricePerAdult,
+                PricePerChild = this.PricePerChild,
+                GuestLimit = this.GuestLimit
             };
             return parkModel;
         }

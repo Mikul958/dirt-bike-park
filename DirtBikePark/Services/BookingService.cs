@@ -16,37 +16,41 @@ namespace DirtBikePark.Services
             _parkRepository = parkRepository;
         }
 
-        public Task<IEnumerable<Booking>> GetBookings()
+        public Task<IEnumerable<BookingResponseDTO>> GetBookings()
         {
             // Retrieve all finalized bookings from the database with no respect to cart or park
-            var bookings = _bookingRepository.GetBookings();
+            IEnumerable<BookingResponseDTO> bookings = _bookingRepository
+                .GetBookings()
+                .Select(booking => new BookingResponseDTO(booking));
             return Task.FromResult(bookings);
         }
 
-        public Task<IEnumerable<Booking>> GetParkBookings(int parkId)
+        public Task<IEnumerable<BookingResponseDTO>> GetParkBookings(int parkId)
         {
             // Retrieve all finalized bookings with the given park ID
-            var bookingsWithPark = _bookingRepository.GetBookingsByPark(parkId);
+            IEnumerable<BookingResponseDTO> bookingsWithPark = _bookingRepository
+                .GetBookingsByPark(parkId)
+                .Select(booking => new BookingResponseDTO(booking));
             return Task.FromResult(bookingsWithPark);
         }
 
-        public Task<Booking?> GetBooking(int bookingId)
+        public Task<BookingResponseDTO?> GetBooking(int bookingId)
         {
             // Retrieve the booking with the given park ID (or null)
-            var booking = _bookingRepository.GetBooking(bookingId);
-            return Task.FromResult(booking);
+            Booking? booking = _bookingRepository.GetBooking(bookingId);
+            BookingResponseDTO? bookingResponse = booking != null ? new BookingResponseDTO(booking) : null;
+            return Task.FromResult(bookingResponse);
         }
 
-        public Task<bool> CreateBooking(Booking booking)
+        public Task<bool> CreateBooking(int parkId, BookingInputDTO bookingInfo)
         {
-
             // Check if a park with the given parkID exists in the database
-            if(_parkRepository.GetPark(booking.ParkId) == null)
+            if(_parkRepository.GetPark(parkId) == null)
                 return Task.FromResult(false);
-            
-            // Wipe ID field so that the database can generate an ID automatically and cartID field
-            booking.Id = 0;
-            booking.CartId = null;
+
+            // Create a new booking with the given parkId and bookingInfo (no cart info allowed at this stage)
+            Booking booking = bookingInfo.FromInputDTO();
+            booking.ParkId = parkId;
 
             // Add the booking to the database
             _bookingRepository.AddBooking(booking);

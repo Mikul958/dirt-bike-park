@@ -134,7 +134,7 @@ namespace Tests
                .Options;
 
             var park = new Park { Id = 1, Name = "Park One", Description = "There are a lot of trees.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m };
-            var booking = new Booking { Id = 11, CartId = null, ParkId = 1, NumDays = 1, NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m };
+            var booking = new BookingInputDTO { NumDays = 1, NumAdults = 3, NumChildren = 0 };
 
             using (var context = new DatabaseContext(options))
             {
@@ -147,7 +147,7 @@ namespace Tests
             var parkService = new ParkService(parkRepository);
             var bookingService = new BookingService(bookingRepository, parkRepository);
 
-            bool isAdded = await bookingService.CreateBooking(booking);
+            bool isAdded = await bookingService.CreateBooking(1, booking);
 
             //Assert
             Assert.True(isAdded);
