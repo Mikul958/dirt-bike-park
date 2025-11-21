@@ -24,12 +24,22 @@ namespace DirtBikePark.Controllers
         }
 
         // GET /api/booking/park/{parkId}
-        // (Your "GetBooking(parkId)" that returns a LIST)
         [HttpGet("park/{parkId:int}")]
-        public async Task<IActionResult> GetBooking([FromRoute] int parkId)
+        public async Task<IActionResult> GetParkBookings([FromRoute] int parkId)
         {
-            var items = await _bookingService.GetBooking(parkId);
+            var items = await _bookingService.GetParkBookings(parkId);
             return Ok(items);
+        }
+
+        // GET /api/booking/{bookingId}
+        [HttpGet("{bookingId:int}")]
+        public async Task<IActionResult> GetBooking([FromRoute] int bookingId)
+        {
+            var booking = await _bookingService.GetBooking(bookingId);
+            if (booking != null)
+                return Ok(booking);
+            else
+                return NotFound($"No booking found with ID {bookingId}.");
         }
 
         // POST /api/booking/park/{parkId}
@@ -45,7 +55,7 @@ namespace DirtBikePark.Controllers
         public async Task<IActionResult> RemoveBooking([FromRoute] int bookingId)
         {
             var ok = await _bookingService.RemoveBooking(bookingId);
-            return ok ? NoContent() : NotFound();
+            return ok ? NoContent() : NotFound($"No booking found with ID {bookingId}.");
         }
     }
 }

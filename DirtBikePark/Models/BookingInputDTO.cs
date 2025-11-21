@@ -7,7 +7,7 @@
         public int NumChildren { get; set; }
 
         // Creates a new Booking from the provided DTO information.
-        // NOTE: Only expected to be used on POSTs, PUTs reference BookingId only
+        // NOTE: Only expected to be used on POSTs, PUTs reference BookingId only. Assign parkID from controller parameter.
         public Booking FromInputDTO(BookingInputDTO bookingDTO)
         {
             Booking bookingModel = new Booking()

@@ -23,11 +23,18 @@ namespace DirtBikePark.Services
             return Task.FromResult(bookings);
         }
 
-        public Task<IEnumerable<Booking>> GetBooking(int parkId)
+        public Task<IEnumerable<Booking>> GetParkBookings(int parkId)
         {
             // Retrieve all finalized bookings with the given park ID
             var bookingsWithPark = _bookingRepository.GetBookingsByPark(parkId);
             return Task.FromResult(bookingsWithPark);
+        }
+
+        public Task<Booking?> GetBooking(int bookingId)
+        {
+            // Retrieve the booking with the given park ID (or null)
+            var booking = _bookingRepository.GetBooking(bookingId);
+            return Task.FromResult(booking);
         }
 
         public Task<bool> CreateBooking(Booking booking)
