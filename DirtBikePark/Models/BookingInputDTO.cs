@@ -2,7 +2,6 @@
 {
     public class BookingInputDTO
     {
-        public int Id { get; set; }
         public int NumDays { get; set; }
         public int NumAdults { get; set; }
         public int NumChildren { get; set; }
@@ -13,7 +12,7 @@
         {
             Booking bookingModel = new Booking()
             {
-                Id = bookingDTO.Id,
+                Id = 0,
                 CartId = null,
                 ParkId = 0,
                 NumDays = bookingDTO.NumDays,
