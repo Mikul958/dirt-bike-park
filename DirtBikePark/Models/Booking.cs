@@ -19,5 +19,6 @@ namespace DirtBikePark.Models
         public int NumAdults { get; set; }
         public int NumChildren { get; set; }
         public decimal TotalPrice { get; set; }
+        public bool IsPaidFor {  get; set; }
     }
 }
