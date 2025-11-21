@@ -20,21 +20,21 @@ namespace DirtBikePark.Data
         public Park? GetPark(int parkId)
         {
             var park = _context.Parks
-            .Include(park => park.Bookings)
-            .FirstOrDefault(park => park.Id == parkId);
-
+                .FirstOrDefault(park => park.Id == parkId);
             return park;
         }
 
         public IEnumerable<Park> GetParks()
         {
-            return _context.Parks.Include(p => p.Bookings);
+            return _context.Parks;
         }
 
         public void RemovePark(Park park)
         {
             // Remove the park and associated bookings from the database
-            _context.Bookings.RemoveRange(park.Bookings);
+            _context.Bookings
+                .Where(booking => booking.ParkId == park.Id)
+                .ExecuteDelete();
             _context.Parks.Remove(park);
         }
 

@@ -10,9 +10,12 @@ namespace DirtBikePark.Models
         public int Id { get; set; }
         [ForeignKey("Cart")]
         public Guid? CartId { get; set; }
+
         [ForeignKey("Park")]
         public int ParkId { get; set; }
-        public string Date { get; set; } = string.Empty;
+        public Park? Park { get; set; }
+
+        public int NumDays { get; set; }
         public int NumAdults { get; set; }
         public int NumChildren { get; set; }
         public decimal TotalPrice { get; set; }
