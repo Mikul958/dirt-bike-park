@@ -21,11 +21,9 @@ namespace DirtBikePark.Controllers
         [HttpGet("{parkId:int}")]
         public async Task<IActionResult> GetPark([FromRoute] int parkId)
         {
-            var park = await _parkService.GetPark(parkId);
+            ParkResponseDTO? park = await _parkService.GetPark(parkId);
             if (park == null)
-            {
                 return NotFound($"Park with ID {parkId} not found.");
-            }
             return Ok(park);
         }
 
@@ -33,25 +31,13 @@ namespace DirtBikePark.Controllers
         [HttpGet]
         public async Task<IActionResult> GetParks()
         {
-            var parks = await _parkService.GetParks();
+            IEnumerable<ParkResponseDTO> parks = await _parkService.GetParks();
             return Ok(parks);
-        }
-
-        // DELETE {protocol}://{urlBase}/api/park/{parkId}
-        [HttpDelete("{parkId:int}")]
-        public async Task<IActionResult> RemovePark([FromRoute] int parkId)
-        {
-            var removed = await _parkService.RemovePark(parkId);
-            if (removed)
-            {
-                return NoContent();
-            }
-            return NotFound($"Park with ID {parkId} was not found.");
         }
 		
 		// POST {protocol}://{urlBase}/api/park/
 		[HttpPost]
-		public async Task<IActionResult> AddPark([FromBody] Park park)
+		public async Task<IActionResult> AddPark([FromBody] ParkInputDTO park)
 		{
             if (park == null)
                 return BadRequest("Park can not be null.");
@@ -59,5 +45,15 @@ namespace DirtBikePark.Controllers
             bool success = await _parkService.AddPark(park);  // Note: removing returned object for now since project just says to return success or failure
 			return Ok(success);
 		}
+
+        // DELETE {protocol}://{urlBase}/api/park/{parkId}
+        [HttpDelete("{parkId:int}")]
+        public async Task<IActionResult> RemovePark([FromRoute] int parkId)
+        {
+            bool removed = await _parkService.RemovePark(parkId);
+            if (removed)
+                return NoContent();
+            return NotFound($"Park with ID {parkId} was not found.");
+        }
     }
 }

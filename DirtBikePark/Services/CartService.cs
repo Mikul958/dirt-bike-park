@@ -25,7 +25,7 @@ namespace DirtBikePark.Services
                 cartId = Guid.NewGuid();
 
             // Retrieve the cart with the given ID from the database if it exists
-            var cart = _cartRepository.GetCart(cartId);
+            Cart? cart = _cartRepository.GetCart(cartId);
 
             // If not, create a cart with the new Guid and save it to the database
             if (cart == null)

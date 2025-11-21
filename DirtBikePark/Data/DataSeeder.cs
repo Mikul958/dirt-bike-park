@@ -41,20 +41,10 @@ namespace DirtBikePark.Data
                 {
                     var bookings = new List<Booking>
                     {
-                        new Booking {Id = 10, CartId = context.Carts.First().Id, ParkId = 3, Date = "01-01-2001", NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m},
-                        new Booking {Id = 11, CartId = context.Carts.First().Id, ParkId = 1, Date = "01-01-2001", NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m}
+                        new Booking {Id = 10, CartId = context.Carts.First().Id, ParkId = 3, NumDays = 2, NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m},
+                        new Booking {Id = 11, CartId = context.Carts.First().Id, ParkId = 1, NumDays = 3, NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m}
                     };
                     context.Bookings.AddRange(bookings);
-                    Cart? cart = context.Carts.FirstOrDefault();
-                    if (cart != null)
-                        cart.Bookings.AddRange(bookings);
-
-                    foreach (var booking in bookings)
-                    {
-                        var park = context.Parks.FirstOrDefault(p => p.Id == booking.ParkId);
-                        if (park != null)
-                            park.Bookings.Add(booking);
-                    }
                     context.SaveChanges();
                 }
 

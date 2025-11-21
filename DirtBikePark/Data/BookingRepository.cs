@@ -1,6 +1,8 @@
 ﻿using DirtBikePark.Interfaces;
 using DirtBikePark.Models;
 
+using Microsoft.EntityFrameworkCore;
+
 namespace DirtBikePark.Data
 {
     public class BookingRepository : IBookingRepository
@@ -17,18 +19,23 @@ namespace DirtBikePark.Data
 
         public Booking? GetBooking(int bookingId)
         {
-            var booking = _context.Bookings.FirstOrDefault(booking => booking.Id == bookingId);
+            var booking = _context.Bookings
+                .Include(booking => booking.Park)
+                .FirstOrDefault(booking => booking.Id == bookingId);
             return booking;
         }
 
         public IEnumerable<Booking> GetBookings()
         {
-            return _context.Bookings;
+            return _context.Bookings
+                .Include(booking => booking.Park);
         }
 
         public IEnumerable<Booking> GetBookingsByPark(int parkId)
         {
-            var bookings = _context.Bookings.Where(booking => booking.ParkId == parkId);
+            var bookings = _context.Bookings
+                .Include(booking => booking.Park)
+                .Where(booking => booking.ParkId == parkId);
             return bookings;
         }
 

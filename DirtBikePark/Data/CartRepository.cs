@@ -21,13 +21,9 @@ namespace DirtBikePark.Data
         {
             return _context.Carts
                 .Include(cart => cart.Bookings)
+                .ThenInclude(booking => booking.Park)
                 .FirstOrDefault(cart => cart.Id == cartId);
         }
-
-        //public void RemoveCart(Guid cartId)
-        //{
-        //    _context.Carts.Remove(cartId);
-        //}
 
         public void Save()
         {

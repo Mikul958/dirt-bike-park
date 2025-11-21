@@ -17,7 +17,7 @@ namespace Tests
         public void Can_Create_Booking()
         {
             var emptyBooking = new Booking();
-            var booking = new Booking { Id = 10, CartId = null, ParkId = 3, Date = "01-01-2001", NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
+            var booking = new Booking { Id = 10, CartId = null, ParkId = 3, NumDays = 3, NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
 
 
             Assert.NotNull(booking);
@@ -36,7 +36,9 @@ namespace Tests
 
             using (var context = new DatabaseContext(options))
             {
-                var booking = new Booking { Id = 10, CartId = null, ParkId = 3, Date = "01-01-2001", NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
+                var park = new Park { Id = 3, Name = "Test Park" };
+                context.Parks.Add(park);
+                var booking = new Booking { Id = 10, CartId = null, ParkId = 3, NumDays = 1, NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
                 context.Bookings.Add(booking);
                 context.SaveChanges();
             }
@@ -46,7 +48,7 @@ namespace Tests
             var parkService = new ParkService(parkRepository);
             var bookingService = new BookingService(bookingRepository, parkRepository);
 
-            var resultBooking = await bookingService.GetBooking(3);
+            var resultBooking = await bookingService.GetParkBookings(3);
 
             //Assert
             Assert.NotNull(resultBooking);
@@ -64,7 +66,7 @@ namespace Tests
 
             using (var context = new DatabaseContext(options))
             {
-                var booking = new Booking { Id = 10, CartId = null, ParkId = 3, Date = "01-01-2001", NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
+                var booking = new Booking { Id = 10, CartId = null, ParkId = 3, NumDays = 3, NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
                 context.Bookings.Add(booking);
                 context.SaveChanges();
             }
@@ -74,7 +76,7 @@ namespace Tests
             var parkService = new ParkService(parkRepository);
             var bookingService = new BookingService(bookingRepository, parkRepository);
 
-            var resultBooking = await bookingService.GetBooking(5);
+            var resultBooking = await bookingService.GetParkBookings(5);
 
             //Assert
             Assert.Empty(resultBooking);
@@ -87,16 +89,20 @@ namespace Tests
                  .ToString())
                  .Options;
 
+            var parks = new List<Park>
+                {
+                    new Park { Id = 1, Name = "Test Park"},
+                    new Park { Id = 3, Name = "Test Park 3"}
+                };
             var bookings = new List<Booking>
                 {
-                    new Booking { Id = 10, CartId = null, ParkId = 3, Date = "01-01-2001", NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m },
-                    new Booking {Id = 11, CartId =null, ParkId = 1, Date = "01-01-2001", NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m}
-
+                    new Booking { Id = 10, CartId = null, ParkId = 3, NumDays = 2, NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m },
+                    new Booking {Id = 11, CartId =null, ParkId = 1, NumDays = 1, NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m}
                 };
 
             using (var context = new DatabaseContext(options))
             {
-
+                context.Parks.AddRange(parks);
                 context.Bookings.AddRange(bookings);
                 context.SaveChanges();
             }
@@ -127,8 +133,8 @@ namespace Tests
                .ToString())
                .Options;
 
-            var booking = new Booking { Id = 11, CartId = null, ParkId = 1, Date = "01-01-2001", NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m };
             var park = new Park { Id = 1, Name = "Park One", Description = "There are a lot of trees.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m };
+            var booking = new BookingInputDTO { NumDays = 1, NumAdults = 3, NumChildren = 0 };
 
             using (var context = new DatabaseContext(options))
             {
@@ -141,7 +147,7 @@ namespace Tests
             var parkService = new ParkService(parkRepository);
             var bookingService = new BookingService(bookingRepository, parkRepository);
 
-            bool isAdded = await bookingService.CreateBooking(booking);
+            bool isAdded = await bookingService.CreateBooking(1, booking);
 
             //Assert
             Assert.True(isAdded);
@@ -155,11 +161,13 @@ namespace Tests
                .ToString())
                .Options;
 
-            var booking = new Booking { Id = 11, CartId = null, ParkId = 1, Date = "01-01-2001", NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m };
+            var park = new Park { Id = 1, Name = "Test Park" };
+            var booking = new Booking { Id = 11, CartId = null, ParkId = 1, NumDays = 1, NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m };
 
             using (var context = new DatabaseContext(options))
             {
-               context.Bookings.Add(booking);
+                context.Parks.Add(park);
+                context.Bookings.Add(booking);
                context.SaveChanges();
             }
 
@@ -169,7 +177,7 @@ namespace Tests
             var bookingService = new BookingService(bookingRepository, parkRepository);
 
             bool isRemoved = await bookingService.RemoveBooking(11);
-            var resultBooking = await bookingService.GetBooking(1);
+            var resultBooking = await bookingService.GetParkBookings(1);
 
             Assert.True(isRemoved);
             Assert.Empty(resultBooking);

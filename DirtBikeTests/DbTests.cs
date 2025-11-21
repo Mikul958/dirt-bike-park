@@ -29,7 +29,7 @@ namespace Tests
             // because it's tied to the unique 'options' generated above.
             using (var context = new DatabaseContext(options))
             {
-                var park = new Park { Id = 1, Name = "South Carolina Park", Bookings = new List<Booking>(), GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
+                var park = new Park { Id = 1, Name = "South Carolina Park", GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
                 context.Parks.Add(park);
                 context.SaveChanges();
             }
@@ -63,7 +63,7 @@ namespace Tests
             // because it's tied to the unique 'options' generated above.
             using (var context = new DatabaseContext(options))
             {
-                var park = new Park { Id = 1, Name = "South Carolina Park", Bookings = new List<Booking>(), GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
+                var park = new Park { Id = 1, Name = "South Carolina Park", GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
                 context.Parks.Add(park);
                 context.SaveChanges();
                 context.Remove(park);
@@ -79,7 +79,6 @@ namespace Tests
         [Fact]
         public void Can_Link_Tables()
         {
-
             // ARRANGE: Set up options for the in-memory database
             // We use a unique name (Guid) to ensure this database is isolated
             // from other tests that might be running.
@@ -88,9 +87,8 @@ namespace Tests
                 .ToString())
                 .Options;
 
-            Booking booking = new Booking { Id = 0, CartId = Guid.NewGuid(), ParkId = 1, Date = "01-01-2001", NumAdults = 10, NumChildren = 10, TotalPrice = 10.00m };
-            Park park = new Park { Id = 1, Name = "South Carolina Park", Bookings = new List<Booking>(), GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
-
+            Park park = new Park { Id = 1, Name = "South Carolina Park", GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
+            Booking booking = new Booking { Id = 1, CartId = Guid.NewGuid(), ParkId = 1, NumDays = 3, NumAdults = 10, NumChildren = 10, TotalPrice = 10.00m };
 
             // ACT: Save the data using a fresh context instance
             // The 'using' block ensures the context is disposed, but the *database* persists
@@ -101,13 +99,13 @@ namespace Tests
                 context.Bookings.Add(booking);
                 context.SaveChanges();
 
-                var parkOfBoooking = context.Parks
-                    .Include(park => park.Bookings)
-                    .First();
-                
-                Booking parkBooking = parkOfBoooking.Bookings.First();
+                Park? retrievedPark = context.Parks.Where(park => park.Id == 1).FirstOrDefault();
+                Booking? retrievedBooking = context.Bookings.Where(booking => booking.Id == 1).FirstOrDefault();
+                Park? retrievedParkThroughBooking = null;
+                if (retrievedBooking != null)
+                    retrievedParkThroughBooking = retrievedBooking.Park;
 
-                Assert.Equal(parkBooking, booking);
+                Assert.Equal(retrievedPark, retrievedParkThroughBooking);
             }
         }
     }
