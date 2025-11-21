@@ -44,7 +44,7 @@ namespace Tests
             var parkRepository = new ParkRepository(new DatabaseContext(options));
             var parkService = new ParkService(parkRepository);
 
-            Park? resultPark = await parkService.GetPark(1);
+            ParkResponseDTO? resultPark = await parkService.GetPark(1);
 
             //Assert
             Assert.NotNull(resultPark);
@@ -71,7 +71,7 @@ namespace Tests
             var parkRepository = new ParkRepository(new DatabaseContext(options));
             var parkService = new ParkService(parkRepository);
 
-            Park? resultPark = await parkService.GetPark(2);
+            ParkResponseDTO? resultPark = await parkService.GetPark(2);
 
             //Assert
             Assert.Null(resultPark);
@@ -100,7 +100,7 @@ namespace Tests
             var parkRepository = new ParkRepository(new DatabaseContext(options));
             var parkService = new ParkService(parkRepository);
 
-            IEnumerable<Park> resultParks = await parkService.GetParks();
+            IEnumerable<ParkResponseDTO> resultParks = await parkService.GetParks();
             
             var resultList = resultParks.ToList();
 
@@ -123,7 +123,7 @@ namespace Tests
                 .ToString())
                 .Options;
 
-            var park = new Park { Id = 1, Name = "South Carolina Park", GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
+            var park = new ParkInputDTO { Name = "South Carolina Park", GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
 
             //using (var context = new DatabaseContext(options))
             //{
@@ -161,7 +161,7 @@ namespace Tests
             var parkService = new ParkService(parkRepository);
 
             bool isAdded = await parkService.RemovePark(1);
-            Park? resultPark = await parkService.GetPark(1);
+            ParkResponseDTO? resultPark = await parkService.GetPark(1);
 
             Assert.True(isAdded);
             Assert.Null(resultPark);

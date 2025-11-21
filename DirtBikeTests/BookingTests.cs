@@ -48,7 +48,7 @@ namespace Tests
             var parkService = new ParkService(parkRepository);
             var bookingService = new BookingService(bookingRepository, parkRepository);
 
-            var resultBooking = await bookingService.GetBooking(3);
+            var resultBooking = await bookingService.GetParkBookings(3);
 
             //Assert
             Assert.NotNull(resultBooking);
@@ -76,7 +76,7 @@ namespace Tests
             var parkService = new ParkService(parkRepository);
             var bookingService = new BookingService(bookingRepository, parkRepository);
 
-            var resultBooking = await bookingService.GetBooking(5);
+            var resultBooking = await bookingService.GetParkBookings(5);
 
             //Assert
             Assert.Empty(resultBooking);
@@ -134,7 +134,7 @@ namespace Tests
                .Options;
 
             var park = new Park { Id = 1, Name = "Park One", Description = "There are a lot of trees.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m };
-            var booking = new Booking { Id = 11, CartId = null, ParkId = 1, NumDays = 1, NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m };
+            var booking = new BookingInputDTO { NumDays = 1, NumAdults = 3, NumChildren = 0 };
 
             using (var context = new DatabaseContext(options))
             {
@@ -147,7 +147,7 @@ namespace Tests
             var parkService = new ParkService(parkRepository);
             var bookingService = new BookingService(bookingRepository, parkRepository);
 
-            bool isAdded = await bookingService.CreateBooking(booking);
+            bool isAdded = await bookingService.CreateBooking(1, booking);
 
             //Assert
             Assert.True(isAdded);
@@ -177,7 +177,7 @@ namespace Tests
             var bookingService = new BookingService(bookingRepository, parkRepository);
 
             bool isRemoved = await bookingService.RemoveBooking(11);
-            var resultBooking = await bookingService.GetBooking(1);
+            var resultBooking = await bookingService.GetParkBookings(1);
 
             Assert.True(isRemoved);
             Assert.Empty(resultBooking);

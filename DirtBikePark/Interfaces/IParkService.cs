@@ -4,9 +4,9 @@ namespace DirtBikePark.Interfaces
 {
     public interface IParkService
     {
-        Task<Park?> GetPark(int parkId);
-        Task<IEnumerable<Park>> GetParks();
+        Task<ParkResponseDTO?> GetPark(int parkId);
+        Task<IEnumerable<ParkResponseDTO>> GetParks();
+        Task<bool> AddPark(ParkInputDTO park);
         Task<bool> RemovePark(int parkId);
-        Task<bool> AddPark(Park park);
     }
 }
