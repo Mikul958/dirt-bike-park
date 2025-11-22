@@ -6,7 +6,8 @@ namespace DirtBikePark.Models
     {
         [Key]
         public Guid Id { get; set; }
-        public decimal taxRate { get; set; }
+        public decimal TaxRate { get; set; }
         public List<Booking> Bookings { get; set; } = new List<Booking>();
+        public decimal TotalPrice { get; set; }
     }
 }
