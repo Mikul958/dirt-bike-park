@@ -1,3 +1,4 @@
+using DirtBikePark.Attributes;
 using DirtBikePark.Interfaces;
 using DirtBikePark.Models;
 using Microsoft.AspNetCore.Http;
@@ -19,7 +20,7 @@ namespace DirtBikePark.Controllers
 
         // GET {protocol}://{urlBase}/api/park/{parkId}
         [HttpGet("{parkId:int}")]
-        public async Task<IActionResult> GetPark([FromRoute] int parkId)
+        public async Task<IActionResult> GetPark([PositiveId][FromRoute] int parkId)
         {
             ParkResponseDTO? park = await _parkService.GetPark(parkId);
             if (park == null)
@@ -48,7 +49,7 @@ namespace DirtBikePark.Controllers
 
         // DELETE {protocol}://{urlBase}/api/park/{parkId}
         [HttpDelete("{parkId:int}")]
-        public async Task<IActionResult> RemovePark([FromRoute] int parkId)
+        public async Task<IActionResult> RemovePark([PositiveId][FromRoute] int parkId)
         {
             bool removed = await _parkService.RemovePark(parkId);
             if (removed)
