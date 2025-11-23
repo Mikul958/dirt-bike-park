@@ -14,6 +14,11 @@ namespace DirtBikePark.Data
                 // Change once switch to real SQL database
                 context.Database.EnsureCreated();
 
+                //context.Database.Migrate(); // This applies pending migrations
+                // Once these are added run the following commands in the command line:
+                // dotnet ef migrations add InitialCreate
+                // dotnet ef database update
+
                 if (!context.Parks.Any())
                 {
                     var parks = new List<Park> 
