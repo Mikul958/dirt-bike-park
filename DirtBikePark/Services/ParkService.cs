@@ -44,6 +44,10 @@ namespace DirtBikePark.Services
             if (parkInfo == null || string.IsNullOrWhiteSpace(parkInfo.Name))
                 throw new ArgumentException("Park itself nor its Park name can be null or empty.");
 
+            // Validate that prices are reasonable, an adult's entry is greater than or equals to a child's entry
+            if (parkInfo.PricePerAdult < parkInfo.PricePerChild)
+                throw new ArgumentException("A child's entry price shouldn't be greater than an adults");
+
             // Create a new Park with the given parkInfo
             Park park = parkInfo.FromInputDTO();
 			
