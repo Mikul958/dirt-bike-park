@@ -10,7 +10,5 @@ namespace DirtBikePark.Interfaces
         void AddBooking(Booking booking);
         void RemoveBooking(Booking booking);
         void Save();
-
-
     }
 }

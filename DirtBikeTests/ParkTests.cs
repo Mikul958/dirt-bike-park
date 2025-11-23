@@ -17,7 +17,7 @@ namespace Tests
         public void Can_Create_Park()
         {
             var emptyPark = new Park();
-            var park = new Park { Id = 1, Name = "South Carolina Park", Bookings = new List<Booking>(), GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
+            var park = new Park { Id = 1, Name = "South Carolina Park", GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
 
 
             Assert.NotNull(park);
@@ -36,7 +36,7 @@ namespace Tests
 
             using (var context = new DatabaseContext(options))
             {
-                var park = new Park { Id = 1, Name = "South Carolina Park", Bookings = new List<Booking>(), GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
+                var park = new Park { Id = 1, Name = "South Carolina Park", GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
                 context.Parks.Add(park);
                 context.SaveChanges();
             }
@@ -44,7 +44,7 @@ namespace Tests
             var parkRepository = new ParkRepository(new DatabaseContext(options));
             var parkService = new ParkService(parkRepository);
 
-            Park? resultPark = await parkService.GetPark(1);
+            ParkResponseDTO? resultPark = await parkService.GetPark(1);
 
             //Assert
             Assert.NotNull(resultPark);
@@ -63,7 +63,7 @@ namespace Tests
 
             using (var context = new DatabaseContext(options))
             {
-                var park = new Park { Id = 1, Name = "South Carolina Park", Bookings = new List<Booking>(), GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
+                var park = new Park { Id = 1, Name = "South Carolina Park", GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
                 context.Parks.Add(park);
                 context.SaveChanges();
             }
@@ -71,7 +71,7 @@ namespace Tests
             var parkRepository = new ParkRepository(new DatabaseContext(options));
             var parkService = new ParkService(parkRepository);
 
-            Park? resultPark = await parkService.GetPark(2);
+            ParkResponseDTO? resultPark = await parkService.GetPark(2);
 
             //Assert
             Assert.Null(resultPark);
@@ -87,7 +87,7 @@ namespace Tests
 
             var parks = new List<Park>
                 {
-                    new Park { Id = 1, Name = "South Carolina Park", Bookings = new List<Booking>(), GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m },
+                    new Park { Id = 1, Name = "South Carolina Park", Location = "South Carolina", GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m },
                     new Park { Id = 2, Name = "Park Two", Description = "There is a river through the middle.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m }
                 };
 
@@ -100,7 +100,7 @@ namespace Tests
             var parkRepository = new ParkRepository(new DatabaseContext(options));
             var parkService = new ParkService(parkRepository);
 
-            IEnumerable<Park> resultParks = await parkService.GetParks();
+            IEnumerable<ParkResponseDTO> resultParks = await parkService.GetParks();
             
             var resultList = resultParks.ToList();
 
@@ -123,7 +123,7 @@ namespace Tests
                 .ToString())
                 .Options;
 
-            var park = new Park { Id = 1, Name = "South Carolina Park", Bookings = new List<Booking>(), GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
+            var park = new ParkInputDTO { Name = "South Carolina Park", GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
 
             //using (var context = new DatabaseContext(options))
             //{
@@ -149,7 +149,7 @@ namespace Tests
                 .ToString())
                 .Options;
 
-            var park = new Park { Id = 1, Name = "South Carolina Park", Bookings = new List<Booking>(), GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
+            var park = new Park { Id = 1, Name = "South Carolina Park", GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
 
             using (var context = new DatabaseContext(options))
             {
@@ -161,7 +161,7 @@ namespace Tests
             var parkService = new ParkService(parkRepository);
 
             bool isAdded = await parkService.RemovePark(1);
-            Park? resultPark = await parkService.GetPark(1);
+            ParkResponseDTO? resultPark = await parkService.GetPark(1);
 
             Assert.True(isAdded);
             Assert.Null(resultPark);

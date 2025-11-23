@@ -17,39 +17,40 @@ namespace DirtBikePark.Services
 			_parkRepository = parkRepository;
         }
 
-        public Task<Park?> GetPark(int parkId)
+        public Task<ParkResponseDTO?> GetPark(int parkId)
 		{
-            var park = _parkRepository.GetPark(parkId);
-            return Task.FromResult(park);
+            Park? park = _parkRepository.GetPark(parkId);
+            ParkResponseDTO? parkResponse = park != null ? new ParkResponseDTO(park) : null;
+            return Task.FromResult(parkResponse);
 		}
 		
-		public Task<IEnumerable<Park>> GetParks()
+		public Task<IEnumerable<ParkResponseDTO>> GetParks()
 		{
-            return Task.FromResult(_parkRepository.GetParks());
+            IEnumerable<ParkResponseDTO> parks = _parkRepository
+                .GetParks()
+                .Select(park => new ParkResponseDTO(park));
+            return Task.FromResult(parks);
         }
 
-        public Task<bool> AddPark(Park park)
+        public Task<bool> AddPark(ParkInputDTO parkInfo)
         {
             // Validate that the park exists and it has been created with a name
-            if (park == null)
-                return Task.FromResult(false);
-            if (string.IsNullOrWhiteSpace(park.Name))
+            if (parkInfo == null || string.IsNullOrWhiteSpace(parkInfo.Name))
                 return Task.FromResult(false);
 
-            // Wipe ID field (0 is default) so that the database can generate an ID automatically
-            park.Id = 0;
+            // Create a new Park with the given parkInfo
+            Park park = parkInfo.FromInputDTO();
 			
             // Add the new park to the database
 			_parkRepository.AddPark(park);
             _parkRepository.Save();
-
             return Task.FromResult(true);
 		}
 		
 		public Task<bool> RemovePark(int parkId)
 		{
-            // Reject if ID is invalid
-            if (parkId < 0)
+            // Reject if parkId is invalid
+            if (parkId < 1)
                 return Task.FromResult(false);
 
             // Check if there is a park in the database with the given ID and return failure if not
@@ -60,7 +61,6 @@ namespace DirtBikePark.Services
             // Remove the park and associated bookings from the database
             _parkRepository.RemovePark(park);
             _parkRepository.Save();
-
 			return Task.FromResult(true);
 		}
 	}
