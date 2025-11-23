@@ -2,6 +2,7 @@ using DirtBikePark.Data;
 using DirtBikePark.Interfaces;
 using DirtBikePark.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace DirtBikePark.Services
         public Task<ParkResponseDTO?> GetPark(int parkId)
 		{
             Park? park = _parkRepository.GetPark(parkId);
-            ParkResponseDTO? parkResponse = park != null ? new ParkResponseDTO(park) : null;
+            ParkResponseDTO? parkResponse = park != null ? new ParkResponseDTO(park) : throw new InvalidOperationException($"Park with ID {parkId} not found.");
             return Task.FromResult(parkResponse);
 		}
 		
@@ -29,6 +30,11 @@ namespace DirtBikePark.Services
             IEnumerable<ParkResponseDTO> parks = _parkRepository
                 .GetParks()
                 .Select(park => new ParkResponseDTO(park));
+
+            if (parks.IsNullOrEmpty())
+            {
+                throw new InvalidOperationException("There are no parks in the database currently");
+            }
             return Task.FromResult(parks);
         }
 
@@ -36,7 +42,7 @@ namespace DirtBikePark.Services
         {
             // Validate that the park exists and it has been created with a name
             if (parkInfo == null || string.IsNullOrWhiteSpace(parkInfo.Name))
-                return Task.FromResult(false);
+                throw new ArgumentException("Park itself nor its Park name can be null or empty.");
 
             // Create a new Park with the given parkInfo
             Park park = parkInfo.FromInputDTO();
@@ -49,14 +55,10 @@ namespace DirtBikePark.Services
 		
 		public Task<bool> RemovePark(int parkId)
 		{
-            // Reject if parkId is invalid
-            if (parkId < 1)
-                return Task.FromResult(false);
-
             // Check if there is a park in the database with the given ID and return failure if not
             Park? park = _parkRepository.GetPark(parkId);
 			if (park == null)
-				return Task.FromResult(false);
+                throw new InvalidOperationException($"Park with ID {parkId} not found.");
 
             // Remove the park and associated bookings from the database
             _parkRepository.RemovePark(park);
