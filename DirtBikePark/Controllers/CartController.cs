@@ -1,4 +1,5 @@
-﻿using DirtBikePark.Interfaces;
+﻿using DirtBikePark.Attributes;
+using DirtBikePark.Interfaces;
 using DirtBikePark.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -31,7 +32,7 @@ namespace DirtBikePark.Controllers
 
         // POST {protocol}://{urlBase}/api/cart/{cartId}/add?parkId={parkId} -- bookingInfo sent in request body
         [HttpPost("{cartId}/add")]
-        public async Task<IActionResult> AddBookingToCart([FromRoute] string cartId, [FromQuery] int parkId, [FromQuery] int bookingId)
+        public async Task<IActionResult> AddBookingToCart([FromRoute] string cartId, [PositiveId][FromQuery] int parkId, [PositiveId][FromQuery] int bookingId)
         {
             // Verify that provided Guid is valid
             Guid processedCartId;
@@ -45,7 +46,7 @@ namespace DirtBikePark.Controllers
 
         // PUT {protocol}://{urlBase}/api/cart/{cardId}/remove?bookingId={bookingId}
         [HttpPut("{cartId}/remove")]
-        public async Task<IActionResult> RemoveBookingFromCart([FromRoute] string cartId, [FromQuery] int bookingId)
+        public async Task<IActionResult> RemoveBookingFromCart([FromRoute] string cartId, [PositiveId][FromQuery] int bookingId)
         {
             // Verify that provided Guid is valid
             Guid processedCartId;

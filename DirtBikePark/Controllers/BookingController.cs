@@ -1,4 +1,5 @@
-﻿using DirtBikePark.Interfaces;
+﻿using DirtBikePark.Attributes;
+using DirtBikePark.Interfaces;
 using DirtBikePark.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,7 +26,7 @@ namespace DirtBikePark.Controllers
 
         // GET /api/booking/park/{parkId}
         [HttpGet("park/{parkId:int}")]
-        public async Task<IActionResult> GetParkBookings([FromRoute] int parkId)
+        public async Task<IActionResult> GetParkBookings([PositiveId][FromRoute] int parkId)
         {
             IEnumerable<BookingResponseDTO> items = await _bookingService.GetParkBookings(parkId);
             return Ok(items);
@@ -33,7 +34,7 @@ namespace DirtBikePark.Controllers
 
         // GET /api/booking/{bookingId}
         [HttpGet("{bookingId:int}")]
-        public async Task<IActionResult> GetBooking([FromRoute] int bookingId)
+        public async Task<IActionResult> GetBooking([PositiveId][FromRoute] int bookingId)
         {
             BookingResponseDTO? booking = await _bookingService.GetBooking(bookingId);
             if (booking != null)
@@ -44,7 +45,7 @@ namespace DirtBikePark.Controllers
 
         // POST /api/booking/park/{parkId}
         [HttpPost("park/{parkId:int}")]
-        public async Task<IActionResult> CreateBooking([FromRoute] int parkId, [FromBody] BookingInputDTO bookingInfo)
+        public async Task<IActionResult> CreateBooking([PositiveId][FromRoute] int parkId, [FromBody] BookingInputDTO bookingInfo)
         {
             bool created = await _bookingService.CreateBooking(parkId, bookingInfo);
             return Ok(created);
@@ -52,7 +53,7 @@ namespace DirtBikePark.Controllers
 
         // DELETE /api/booking/{bookingId}
         [HttpDelete("{bookingId:int}")]
-        public async Task<IActionResult> RemoveBooking([FromRoute] int bookingId)
+        public async Task<IActionResult> RemoveBooking([PositiveId][FromRoute] int bookingId)
         {
             bool ok = await _bookingService.RemoveBooking(bookingId);
             return ok ? NoContent() : NotFound($"No booking found with ID {bookingId}.");
