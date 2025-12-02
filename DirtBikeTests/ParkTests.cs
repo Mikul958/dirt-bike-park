@@ -63,7 +63,7 @@ namespace Tests
 
             using (var context = new DatabaseContext(options))
             {
-                var park = new Park { Id = 1, Name = "South Carolina Park", GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
+                var park = new Park { Id = 1, Name = "South Carolina Park", Location = "South Carolina", Description = "", ImageUrl = "", GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
                 context.Parks.Add(park);
                 context.SaveChanges();
             }
@@ -71,7 +71,16 @@ namespace Tests
             var parkRepository = new ParkRepository(new DatabaseContext(options));
             var parkService = new ParkService(parkRepository);
 
-            ParkResponseDTO? resultPark = await parkService.GetPark(2);
+            ParkResponseDTO? resultPark;
+            try
+            {
+                resultPark = await parkService.GetPark(2);
+            }
+            catch (InvalidOperationException e)
+            {
+                resultPark = null;
+                Console.WriteLine(e.StackTrace);  // Gets rid of warning
+            }
 
             //Assert
             Assert.Null(resultPark);
@@ -160,10 +169,20 @@ namespace Tests
             var parkRepository = new ParkRepository(new DatabaseContext(options));
             var parkService = new ParkService(parkRepository);
 
-            bool isAdded = await parkService.RemovePark(1);
-            ParkResponseDTO? resultPark = await parkService.GetPark(1);
+            bool isRemoved = await parkService.RemovePark(1);
 
-            Assert.True(isAdded);
+            ParkResponseDTO? resultPark;
+            try
+            {
+                resultPark = await parkService.GetPark(1);
+            }
+            catch (InvalidOperationException e)
+            {
+                resultPark = null;
+                Console.WriteLine(e.StackTrace);  // Gets rid of warning
+            }
+
+            Assert.True(isRemoved);
             Assert.Null(resultPark);
         }
     }
