@@ -32,9 +32,8 @@ namespace DirtBikePark.Services
                 .Select(park => new ParkResponseDTO(park));
 
             if (parks.IsNullOrEmpty())
-            {
                 throw new InvalidOperationException("There are no parks in the database currently");
-            }
+
             return Task.FromResult(parks);
         }
 
