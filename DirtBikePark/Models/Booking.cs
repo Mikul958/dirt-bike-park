@@ -15,7 +15,8 @@ namespace DirtBikePark.Models
         public int ParkId { get; set; }
         public Park? Park { get; set; }
 
-        public int NumDays { get; set; }
+        // public int NumDays { get; set; }
+        public DateOnly Date { get; set; }
         public int NumAdults { get; set; }
         public int NumChildren { get; set; }
         public decimal TotalPrice { get; set; }

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System;
 
 namespace DirtBikePark.Attributes
 {
@@ -9,7 +8,7 @@ namespace DirtBikePark.Attributes
         public PositiveIdAttribute() : base("The {0} field must be a positive integer (greater than 0).") { }
 
         // The validation logic overriding this base method
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
             // Check if the value is null
             if (value == null)
@@ -27,7 +26,7 @@ namespace DirtBikePark.Attributes
                 }
                 else
                 {
-                    return new ValidationResult(FormatErrorMessage(validationContext.DisplayName), new[] { validationContext.MemberName });
+                    return new ValidationResult(FormatErrorMessage(validationContext.DisplayName), new[] { validationContext.MemberName ?? validationContext.DisplayName });
                 }
             }
 
