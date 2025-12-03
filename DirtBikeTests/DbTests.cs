@@ -88,7 +88,7 @@ namespace Tests
                 .Options;
 
             Park park = new Park { Id = 1, Name = "South Carolina Park", GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
-            Booking booking = new Booking { Id = 1, CartId = Guid.NewGuid(), ParkId = 1, Date = new DateTime(3000000), NumAdults = 10, NumChildren = 10, TotalPrice = 10.00m };
+            Booking booking = new Booking { Id = 1, CartId = Guid.NewGuid(), ParkId = 1, Date = new DateOnly(2025, 12, 12), NumAdults = 10, NumChildren = 10, TotalPrice = 10.00m };
 
             // ACT: Save the data using a fresh context instance
             // The 'using' block ensures the context is disposed, but the *database* persists
