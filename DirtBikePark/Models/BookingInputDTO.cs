@@ -8,7 +8,7 @@ namespace DirtBikePark.Models
         // [Range(1, int.MaxValue, ErrorMessage = "The number of days must be at least 1")]
         // public int NumDays { get; set; }
 
-        public DateTime Date {  get; set; }
+        public DateOnly Date {  get; set; }
 
         [Range(0, int.MaxValue, ErrorMessage = "The number of adults must be positive")]
         public int NumAdults { get; set; }
