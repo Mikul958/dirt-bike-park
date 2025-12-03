@@ -45,12 +45,28 @@ namespace DirtBikePark.Services
         public Task<bool> CreateBooking(int parkId, BookingInputDTO bookingInfo)
         {
             // Check if a park with the given parkID exists in the database
-            if(_parkRepository.GetPark(parkId) == null)
-                return Task.FromResult(false);
+            Park? park = _parkRepository.GetPark(parkId);
+            if (park == null)
+                throw new InvalidOperationException($"Park with ID {parkId} not found.");
+
+            // Validating BookingDTO input matches requested Park info  --might remove if guestLimit is related to number of bookings versus actual guest in a booking
+            int totalGuest = bookingInfo.NumAdults + bookingInfo.NumChildren;
+            if (totalGuest > park.GuestLimit)
+                throw new InvalidOperationException($"Cannot add this booking to this park as it has cannot fullfill your capacity: {park.GuestLimit} remaining spots. Your guest count: {totalGuest}");
+            if (totalGuest == 0)
+                throw new InvalidOperationException($"Cannot create a Booking with no guests: {bookingInfo.NumChildren} children, {bookingInfo.NumAdults} adults");
+
+            // Reduce guestLimit
+            park.GuestLimit -= totalGuest;
+
+            // Calculate price
+            decimal adultCost = bookingInfo.NumAdults * park.PricePerAdult;
+            decimal childrenCost = bookingInfo.NumChildren * park.PricePerChild;
 
             // Create a new booking with the given parkId and bookingInfo (no cart info allowed at this stage)
             Booking booking = bookingInfo.FromInputDTO();
             booking.ParkId = parkId;
+            booking.TotalPrice = adultCost + childrenCost;
 
             // Add the booking to the database
             _bookingRepository.AddBooking(booking);
@@ -60,14 +76,10 @@ namespace DirtBikePark.Services
 
         public Task<bool> RemoveBooking(int bookingId)
         {
-            // Reject if ID is invalid
-            if (bookingId < 0)
-                return Task.FromResult(false);
-
             // Check if there is a booking in the database with the given ID and return failure if not
             Booking? booking = _bookingRepository.GetBooking(bookingId);
             if (booking == null)
-                return Task.FromResult(false);
+                throw new InvalidOperationException($"Booking with ID {bookingId} not found.");
 
             // Remove the booking from the database
             _bookingRepository.RemoveBooking(booking);
