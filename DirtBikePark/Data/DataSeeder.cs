@@ -14,28 +14,54 @@ namespace DirtBikePark.Data
                 // Change once switch to real SQL database
                 context.Database.EnsureCreated();
 
+                //context.Database.Migrate(); // This applies pending migrations
+                // Once these are added run the following commands in the command line:
+                // dotnet ef migrations add InitialCreate
+                // dotnet ef database update
+
                 if (!context.Parks.Any())
                 {
                     var parks = new List<Park> 
                     {
-                        new Park { Id = 1, Name = "Park One", Description = "There are a lot of trees.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m },
-                        new Park { Id = 2, Name = "Park Two", Description = "There is a river through the middle.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m  },
-                        new Park { Id = 3, Name = "Park Three", Description = "It's pretty green.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m  }
+                        new Park {      Id = 1,
+                                        Name = "Grand Canyon Adventure Tour",
+                                        Location = "Arizona, USA",
+                                        Description = "A breathtaking tour of the Grand Canyon South Rim, including scenic viewpoints and a guided nature walk.",
+                                        PricePerAdult = 150.75m,
+                                        PricePerChild = 75.25m,
+                                        GuestLimit = 20 
+                        },
+                        new Park {      Id = 2,
+                                        Name = "Eiffel Tower Guided Visit",
+                                        Location = "Paris, France",
+                                        Description = "Skip the line and enjoy a guided tour to the top of the iconic Eiffel Tower with panoramic city views.",
+                                        PricePerAdult = 45.00m,
+                                        PricePerChild = 20.00m,
+                                        GuestLimit = 15
+                        },
+                        new Park {      Id = 3,
+                                        Name = "Kyoto Bamboo Grove Walk",
+                                        Location = "Kyoto, Japan",
+                                        Description = "A serene morning walk through the famous Arashiyama Bamboo Grove, followed by a traditional tea ceremony.",
+                                        PricePerAdult = 80.50m,
+                                        PricePerChild = 40.25m,
+                                        GuestLimit = 10
+                        }
                     };
 
                     context.Parks.AddRange(parks);
                     context.SaveChanges();
                 }
 
-                if (!context.Carts.Any())
-                {
-                    var carts = new List<Cart>
-                    {
-                        new Cart {Id = Guid.NewGuid() }
-                    };
-                    context.Carts.AddRange(carts);
-                    context.SaveChanges();
-                }
+                //if (!context.Carts.Any())
+                //{
+                //    var carts = new List<Cart>
+                //    {
+                //        new Cart {Id = Guid.NewGuid() }
+                //    };
+                //    context.Carts.AddRange(carts);
+                //    context.SaveChanges();
+                //}
 
                 if (!context.Bookings.Any())
                 {
