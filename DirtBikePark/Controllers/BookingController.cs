@@ -49,8 +49,10 @@ namespace DirtBikePark.Controllers
         {
             try
             {
-                bool created = await _bookingService.CreateBooking(parkId, bookingInfo);
-                return Ok(created);
+                BookingResponseDTO createdBooking = await _bookingService.CreateBooking(parkId, bookingInfo);
+
+                // Return 201 created with route associated with GetBooking + supplied bookingId and a corresponding BookingResponseDTO in the body
+                return CreatedAtAction(nameof(GetBooking), new { bookingId = createdBooking.Id }, createdBooking);
             }
             catch (InvalidOperationException ex)
             {

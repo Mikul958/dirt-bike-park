@@ -42,7 +42,7 @@ namespace DirtBikePark.Services
             return Task.FromResult(bookingResponse);
         }
 
-        public Task<bool> CreateBooking(int parkId, BookingInputDTO bookingInfo)
+        public Task<BookingResponseDTO> CreateBooking(int parkId, BookingInputDTO bookingInfo)
         {
             // Check if a park with the given parkID exists in the database
             Park? park = _parkRepository.GetPark(parkId);
@@ -71,7 +71,7 @@ namespace DirtBikePark.Services
             // Add the booking to the database
             _bookingRepository.AddBooking(booking);
             _bookingRepository.Save();
-            return Task.FromResult(true);
+            return Task.FromResult(new BookingResponseDTO(booking));
         }
 
         public Task<bool> RemoveBooking(int bookingId)
