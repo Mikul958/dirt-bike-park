@@ -59,9 +59,6 @@ namespace DirtBikePark.Services
             // Update parkId and cartId with provided values
             retrievedBooking.CartId = cartId;
             retrievedBooking.ParkId = parkId;
-
-            // Adding Bookings price to cart total price
-            retrievedCart.TotalPrice += retrievedBooking.TotalPrice;
             _bookingRepository.Save();
 
             return Task.FromResult(true);
@@ -73,16 +70,13 @@ namespace DirtBikePark.Services
             if (retrievedBooking == null || retrievedBooking.CartId != cartId)
                 throw new InvalidOperationException($"Booking with ID {bookingId} not found.");
 
-            // Wipe the cartId to break the link between booking and cart
-            retrievedBooking.CartId = null;
-
             // Check that the provided cart exists
             Cart? retrievedCart = _cartRepository.GetCart(cartId);
             if (retrievedCart == null)
                 throw new InvalidOperationException($"Cart with ID {cartId} not found.");
 
-            // Remove the bookings price from the carts total price
-            retrievedCart.TotalPrice -= retrievedBooking.TotalPrice;
+            // Wipe the cartId to break the link between booking and cart
+            retrievedBooking.CartId = null;
             _bookingRepository.Save();
 
             return Task.FromResult(true);

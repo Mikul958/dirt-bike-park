@@ -49,17 +49,20 @@ namespace DirtBikePark.Services
             if (park == null)
                 throw new InvalidOperationException($"Park with ID {parkId} not found.");
 
-            // Validating BookingDTO input matches requested Park info  --might remove if guestLimit is related to number of bookings versus actual guest in a booking
-            int totalGuest = bookingInfo.NumAdults + bookingInfo.NumChildren;
-            if (totalGuest > park.GuestLimit)
-                throw new InvalidOperationException($"Cannot add this booking to this park as it has cannot fullfill your capacity: {park.GuestLimit} remaining spots. Your guest count: {totalGuest}");
-            if (totalGuest == 0)
+            // Validate provided date
+            if (bookingInfo.Date < DateOnly.FromDateTime(DateTime.Now))
+                throw new InvalidOperationException($"Invalid or empty date provided: {bookingInfo.Date}");
+
+            // Validating BookingDTO input matches requested Park info
+            int totalGuests = bookingInfo.NumAdults + bookingInfo.NumChildren;
+            if (totalGuests == 0)
                 throw new InvalidOperationException($"Cannot create a Booking with no guests: {bookingInfo.NumChildren} children, {bookingInfo.NumAdults} adults");
 
-            // Reduce guestLimit
-            park.GuestLimit -= totalGuest;
+            int guestsAlreadyBooked = _bookingRepository.CountBookingsForPark(parkId, bookingInfo.Date);
+            if (guestsAlreadyBooked + totalGuests > park.GuestLimit)
+                throw new InvalidOperationException($"Cannot add this booking to this park as it would cause the number of guests to exceed the park's guest capacity on {bookingInfo.Date}");
 
-            // Calculate price
+            // Calculate price based on guest count and park prices
             decimal adultCost = bookingInfo.NumAdults * park.PricePerAdult;
             decimal childrenCost = bookingInfo.NumChildren * park.PricePerChild;
 

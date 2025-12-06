@@ -8,6 +8,7 @@ using System;
 using Xunit;
 using System.Linq;
 using DirtBikePark.Services;
+using System.Diagnostics;
 
 namespace Tests
 {
@@ -147,10 +148,18 @@ namespace Tests
             var parkService = new ParkService(parkRepository);
             var bookingService = new BookingService(bookingRepository, parkRepository);
 
-            bool isAdded = await bookingService.CreateBooking(1, booking);
+            BookingResponseDTO? addedBooking = null;
+            try
+            {
+                addedBooking = await bookingService.CreateBooking(1, booking);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine(ex.StackTrace);  // Gets rid of warning
+            }
 
             //Assert
-            Assert.True(isAdded);
+            Assert.True(addedBooking != null);
         }
 
         [Fact]

@@ -12,10 +12,6 @@ namespace DirtBikePark.Data
         {
             _context = context;
         }
-        public void AddBooking(Booking booking)
-        {
-            _context.Bookings.Add(booking);
-        }
 
         public Booking? GetBooking(int bookingId)
         {
@@ -37,6 +33,18 @@ namespace DirtBikePark.Data
                 .Include(booking => booking.Park)
                 .Where(booking => booking.ParkId == parkId);
             return bookings;
+        }
+
+        public int CountBookingsForPark(int parkId, DateOnly date)
+        {
+            return _context.Bookings
+                .Where(booking => booking.ParkId == parkId && booking.Date == date)
+                .Sum(booking => booking.NumAdults + booking.NumChildren);
+        }
+
+        public void AddBooking(Booking booking)
+        {
+            _context.Bookings.Add(booking);
         }
 
         public void RemoveBooking(Booking booking)
