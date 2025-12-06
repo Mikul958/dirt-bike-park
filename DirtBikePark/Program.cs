@@ -22,8 +22,8 @@ builder.Services.AddSwaggerGen();
 // Add Entity Framework Core in-memory database.
 builder.Services.AddDbContext<DatabaseContext>(options =>
 {
-    options.UseInMemoryDatabase("DirtBikeDB");
-    //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    //options.UseInMemoryDatabase("DirtBikeDB");
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
 // Build the app.

@@ -57,7 +57,7 @@ namespace DirtBikePark.Services
 
             // Update parkId and cartId with provided values
             retrievedBooking.CartId = cartId;
-            retrievedBooking.ParkId = parkId;
+            //retrievedBooking.ParkId = parkId;
             _bookingRepository.Save();
 
             return Task.FromResult(true);

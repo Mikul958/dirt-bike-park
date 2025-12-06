@@ -12,9 +12,9 @@ namespace DirtBikePark.Data
                 var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
 
                 // Change once switch to real SQL database
-                context.Database.EnsureCreated();
+                //context.Database.EnsureCreated();
 
-                //context.Database.Migrate(); // This applies pending migrations
+                context.Database.Migrate(); // This applies pending migrations
                 // Once these are added run the following commands in the command line:
                 // dotnet ef migrations add InitialCreate
                 // dotnet ef database update
@@ -23,7 +23,7 @@ namespace DirtBikePark.Data
                 {
                     var parks = new List<Park> 
                     {
-                        new Park {      Id = 1,
+                        new Park {     /* Id = 1,*/
                                         Name = "Grand Canyon Adventure Tour",
                                         Location = "Arizona, USA",
                                         Description = "A breathtaking tour of the Grand Canyon South Rim, including scenic viewpoints and a guided nature walk.",
@@ -31,7 +31,7 @@ namespace DirtBikePark.Data
                                         PricePerChild = 75.25m,
                                         GuestLimit = 20 
                         },
-                        new Park {      Id = 2,
+                        new Park {     /* Id = 2,*/
                                         Name = "Eiffel Tower Guided Visit",
                                         Location = "Paris, France",
                                         Description = "Skip the line and enjoy a guided tour to the top of the iconic Eiffel Tower with panoramic city views.",
@@ -39,7 +39,7 @@ namespace DirtBikePark.Data
                                         PricePerChild = 20.00m,
                                         GuestLimit = 15
                         },
-                        new Park {      Id = 3,
+                        new Park {      /*Id = 3,*/
                                         Name = "Kyoto Bamboo Grove Walk",
                                         Location = "Kyoto, Japan",
                                         Description = "A serene morning walk through the famous Arashiyama Bamboo Grove, followed by a traditional tea ceremony.",
@@ -67,8 +67,8 @@ namespace DirtBikePark.Data
                 {
                     var bookings = new List<Booking>
                     {
-                        new Booking {Id = 10, CartId = context.Carts.First().Id, ParkId = 3, Date = new DateOnly(2025, 12, 12), NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m},
-                        new Booking {Id = 11, CartId = context.Carts.First().Id, ParkId = 1, Date = new DateOnly(2025, 12, 10), NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m}
+                        new Booking {/*Id = 10,*/ CartId = null, ParkId = 3, Date = new DateOnly(2025, 12, 12), NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m},
+                        new Booking {/*Id = 11,*/ CartId = null, ParkId = 1, Date = new DateOnly(2025, 12, 10), NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m}
                     };
                     context.Bookings.AddRange(bookings);
                     context.SaveChanges();
