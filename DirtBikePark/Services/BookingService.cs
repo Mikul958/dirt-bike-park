@@ -58,7 +58,7 @@ namespace DirtBikePark.Services
             if (totalGuests == 0)
                 throw new InvalidOperationException($"Cannot create a Booking with no guests: {bookingInfo.NumChildren} children, {bookingInfo.NumAdults} adults");
 
-            int guestsAlreadyBooked = _bookingRepository.CountBookingsForPark(parkId, bookingInfo.Date);
+            int guestsAlreadyBooked = _bookingRepository.CountGuestsForPark(parkId, bookingInfo.Date);
             if (guestsAlreadyBooked + totalGuests > park.GuestLimit)
                 throw new InvalidOperationException($"Cannot add this booking to this park as it would cause the number of guests to exceed the park's guest capacity on {bookingInfo.Date}");
 

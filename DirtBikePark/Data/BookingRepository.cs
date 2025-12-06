@@ -35,7 +35,7 @@ namespace DirtBikePark.Data
             return bookings;
         }
 
-        public int CountBookingsForPark(int parkId, DateOnly date)
+        public int CountGuestsForPark(int parkId, DateOnly date)
         {
             return _context.Bookings
                 .Where(booking => booking.ParkId == parkId && booking.Date == date)
