@@ -97,7 +97,7 @@ namespace Tests
             var park = new Park { Id = 3, Name = "Park Three", Description = "It's pretty green.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m };
             var guid = Guid.NewGuid();
             var cart = new Cart { Id = guid };
-            var booking = new Booking { Id = 10, CartId = null, ParkId = 3, NumDays = 3, NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
+            var booking = new Booking { Id = 10, CartId = null, ParkId = 3, Date = new DateOnly(2025, 12, 12), NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
 
 
             using (var context = new DatabaseContext(options))
@@ -141,7 +141,7 @@ namespace Tests
             var park = new Park { Id = 3, Name = "Park Three", Description = "It's pretty green.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m };
             var guid = Guid.NewGuid();
             var cart = new Cart { Id = guid };
-            var booking = new Booking { Id = 10, CartId = guid, ParkId = 3, NumDays = 3, NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
+            var booking = new Booking { Id = 10, CartId = guid, ParkId = 3, Date = new DateOnly(2025, 12, 12), NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
 
 
             using (var context = new DatabaseContext(options))

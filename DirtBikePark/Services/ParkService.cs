@@ -18,10 +18,12 @@ namespace DirtBikePark.Services
 			_parkRepository = parkRepository;
         }
 
-        public Task<ParkResponseDTO?> GetPark(int parkId)
+        public Task<ParkResponseDTO> GetPark(int parkId)
 		{
             Park? park = _parkRepository.GetPark(parkId);
-            ParkResponseDTO? parkResponse = park != null ? new ParkResponseDTO(park) : throw new InvalidOperationException($"Park with ID {parkId} not found.");
+            ParkResponseDTO? parkResponse = (park != null ? new ParkResponseDTO(park) : null);
+            if (parkResponse == null)
+                throw new InvalidOperationException($"Park with ID {parkId} not found.");
             return Task.FromResult(parkResponse);
 		}
 		

@@ -4,7 +4,8 @@
     {
         public int Id { get; set; }
         public Park? Park { get; set; }
-        public int NumDays { get; set; }
+        // public int NumDays { get; set; }
+        public DateOnly Date { get; set; }
         public int NumAdults { get; set; }
         public int NumChildren { get; set; }
         public decimal TotalPrice { get; set; }
@@ -14,7 +15,7 @@
         {
             Id = bookingModel.Id;
             Park = bookingModel.Park;
-            NumDays = bookingModel.NumDays;
+            Date = bookingModel.Date;
             NumAdults = bookingModel.NumAdults;
             NumChildren = bookingModel.NumChildren;
             TotalPrice = bookingModel.TotalPrice;
@@ -25,7 +26,7 @@
         {
             Id = bookingModel.Id;
             Park = bookingModel.Park;
-            NumDays = bookingModel.NumDays;
+            Date = bookingModel.Date;
             NumAdults = bookingModel.NumAdults;
             NumChildren = bookingModel.NumChildren;
             TotalPrice = bookingModel.TotalPrice;
