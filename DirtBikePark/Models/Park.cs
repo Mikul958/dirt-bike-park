@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DirtBikePark.Models
@@ -12,7 +13,9 @@ namespace DirtBikePark.Models
         public string Location { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string ImageUrl { get; set; } = string.Empty;
+        [Precision(18, 2)]
         public decimal PricePerAdult { get; set; }
+        [Precision(18, 2)]
         public decimal PricePerChild { get; set; }
         public int GuestLimit { get; set; }
     }

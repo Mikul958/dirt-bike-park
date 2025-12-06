@@ -44,20 +44,21 @@ namespace DirtBikePark.Services
         {
             // Check that the provided park exists
             if (_parkRepository.GetPark(parkId) == null)
-                return Task.FromResult(false);  // Maybe add throws
+                throw new InvalidOperationException($"Park with ID {parkId} not found.");
 
             // Check that the provided booking exists and is not already in a cart
             Booking? retrievedBooking = _bookingRepository.GetBooking(bookingId);
             if (retrievedBooking == null || retrievedBooking.CartId != null)
-                return Task.FromResult(false);
+                throw new InvalidOperationException($"Booking with ID {bookingId} not found.");
 
             // Check that the provided cart exists
-            if (_cartRepository.GetCart(cartId) == null)
-                return Task.FromResult(false);
+            Cart? retrievedCart = _cartRepository.GetCart(cartId);
+            if (retrievedCart == null)
+                throw new InvalidOperationException($"Cart with ID {cartId} not found.");
 
             // Update parkId and cartId with provided values
             retrievedBooking.CartId = cartId;
-            //retrievedBooking.ParkId = parkId;
+            retrievedBooking.ParkId = parkId;
             _bookingRepository.Save();
 
             return Task.FromResult(true);
@@ -67,7 +68,12 @@ namespace DirtBikePark.Services
             // Check that the provided booking exists and is already in the provided cart
             Booking? retrievedBooking = _bookingRepository.GetBooking(bookingId);
             if (retrievedBooking == null || retrievedBooking.CartId != cartId)
-                return Task.FromResult(false);
+                throw new InvalidOperationException($"Booking with ID {bookingId} not found.");
+
+            // Check that the provided cart exists
+            Cart? retrievedCart = _cartRepository.GetCart(cartId);
+            if (retrievedCart == null)
+                throw new InvalidOperationException($"Cart with ID {cartId} not found.");
 
             // Wipe the cartId to break the link between booking and cart
             retrievedBooking.CartId = null;

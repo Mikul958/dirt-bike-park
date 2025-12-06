@@ -6,7 +6,7 @@ namespace DirtBikePark.Interfaces
     {
         Task<ParkResponseDTO> GetPark(int parkId);
         Task<IEnumerable<ParkResponseDTO>> GetParks();
-        Task<bool> AddPark(ParkInputDTO park);
+        Task<ParkResponseDTO> AddPark(ParkInputDTO park);
         Task<bool> RemovePark(int parkId);
     }
 }

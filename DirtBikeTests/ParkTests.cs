@@ -133,21 +133,21 @@ namespace Tests
                 .Options;
 
             var park = new ParkInputDTO { Name = "South Carolina Park", GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
-
-            //using (var context = new DatabaseContext(options))
-            //{
-            //    context.Parks.AddRange(parks);
-            //    context.SaveChanges();
-            //}
-
             var parkRepository = new ParkRepository(new DatabaseContext(options));
             var parkService = new ParkService(parkRepository);
 
-            bool isAdded = await parkService.AddPark(park);
+            ParkResponseDTO? addedPark = null;
+            try
+            {
+                addedPark = await parkService.AddPark(park);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine(ex.StackTrace);  // Gets rid of warning
+            }
 
-            //var resultList = resultParks.ToList();
-
-            Assert.True(isAdded);
+            //Assert
+            Assert.True(addedPark != null);
         }
 
         [Fact]

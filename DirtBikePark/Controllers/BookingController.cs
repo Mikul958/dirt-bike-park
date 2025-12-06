@@ -47,16 +47,32 @@ namespace DirtBikePark.Controllers
         [HttpPost("park/{parkId:int}")]
         public async Task<IActionResult> CreateBooking([PositiveId][FromRoute] int parkId, [FromBody] BookingInputDTO bookingInfo)
         {
-            bool created = await _bookingService.CreateBooking(parkId, bookingInfo);
-            return Ok(created);
+            try
+            {
+                BookingResponseDTO createdBooking = await _bookingService.CreateBooking(parkId, bookingInfo);
+
+                // Return 201 created with route associated with GetBooking + supplied bookingId and a corresponding BookingResponseDTO in the body
+                return CreatedAtAction(nameof(GetBooking), new { bookingId = createdBooking.Id }, createdBooking);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // DELETE /api/booking/{bookingId}
         [HttpDelete("{bookingId:int}")]
         public async Task<IActionResult> RemoveBooking([PositiveId][FromRoute] int bookingId)
         {
-            bool ok = await _bookingService.RemoveBooking(bookingId);
-            return ok ? NoContent() : NotFound($"No booking found with ID {bookingId}.");
+            try
+            {
+                bool ok = await _bookingService.RemoveBooking(bookingId);
+                return NoContent();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
     }
 }

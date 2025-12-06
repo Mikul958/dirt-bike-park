@@ -39,9 +39,17 @@ namespace DirtBikePark.Controllers
             if (!Guid.TryParse(cartId, out processedCartId))
                 return BadRequest("Could not find a cart with the provided cart ID");
 
-            // Link booking to cart through service
-            bool addStatus = await _cartService.AddBookingToCart(processedCartId, parkId, bookingId);
-            return Ok(addStatus);
+            try
+            {
+                // Link booking to cart through service
+                bool addStatus = await _cartService.AddBookingToCart(processedCartId, parkId, bookingId);
+                return Ok(addStatus);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
         }
 
         // PUT {protocol}://{urlBase}/api/cart/{cardId}/remove?bookingId={bookingId}
@@ -53,9 +61,17 @@ namespace DirtBikePark.Controllers
             if (!Guid.TryParse(cartId, out processedCartId))
                 return BadRequest("Could not find a cart with the provided cart ID");
 
-            // Remove link between booking and cart through service
-            bool removeStatus = await _cartService.RemoveBookingFromCart(processedCartId, bookingId);
-            return Ok(removeStatus);
+            try
+            {
+                // Remove link between booking and cart through service
+                bool removeStatus = await _cartService.RemoveBookingFromCart(processedCartId, bookingId);
+                return Ok(removeStatus);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
     }
 }
