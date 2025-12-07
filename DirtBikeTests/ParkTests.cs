@@ -42,7 +42,8 @@ namespace Tests
             }
 
             var parkRepository = new ParkRepository(new DatabaseContext(options));
-            var parkService = new ParkService(parkRepository);
+            var bookingRepository = new BookingRepository(new DatabaseContext(options));
+            var parkService = new ParkService(parkRepository, bookingRepository);
 
             ParkResponseDTO? resultPark = await parkService.GetPark(1);
 
@@ -69,7 +70,8 @@ namespace Tests
             }
 
             var parkRepository = new ParkRepository(new DatabaseContext(options));
-            var parkService = new ParkService(parkRepository);
+            var bookingRepository = new BookingRepository(new DatabaseContext(options));
+            var parkService = new ParkService(parkRepository, bookingRepository);
 
             ParkResponseDTO? resultPark;
             try
@@ -107,7 +109,8 @@ namespace Tests
             }
 
             var parkRepository = new ParkRepository(new DatabaseContext(options));
-            var parkService = new ParkService(parkRepository);
+            var bookingRepository = new BookingRepository(new DatabaseContext(options));
+            var parkService = new ParkService(parkRepository, bookingRepository);
 
             IEnumerable<ParkResponseDTO> resultParks = await parkService.GetParks();
             
@@ -134,7 +137,8 @@ namespace Tests
 
             var park = new ParkInputDTO { Name = "South Carolina Park", GuestLimit = 10, PricePerAdult = 5.00m, PricePerChild = 2.00m };
             var parkRepository = new ParkRepository(new DatabaseContext(options));
-            var parkService = new ParkService(parkRepository);
+            var bookingRepository = new BookingRepository(new DatabaseContext(options));
+            var parkService = new ParkService(parkRepository, bookingRepository);
 
             ParkResponseDTO? addedPark = null;
             try
@@ -167,7 +171,8 @@ namespace Tests
             }
 
             var parkRepository = new ParkRepository(new DatabaseContext(options));
-            var parkService = new ParkService(parkRepository);
+            var bookingRepository = new BookingRepository(new DatabaseContext(options));
+            var parkService = new ParkService(parkRepository, bookingRepository);
 
             bool isRemoved = await parkService.RemovePark(1);
 

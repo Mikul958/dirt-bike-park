@@ -46,7 +46,7 @@ namespace Tests
 
             var parkRepository = new ParkRepository(new DatabaseContext(options));
             var bookingRepository = new BookingRepository(new DatabaseContext(options));
-            var parkService = new ParkService(parkRepository);
+            var parkService = new ParkService(parkRepository, bookingRepository);
             var bookingService = new BookingService(bookingRepository, parkRepository);
 
             var resultBooking = await bookingService.GetParkBookings(3);
@@ -74,7 +74,7 @@ namespace Tests
 
             var parkRepository = new ParkRepository(new DatabaseContext(options));
             var bookingRepository = new BookingRepository(new DatabaseContext(options));
-            var parkService = new ParkService(parkRepository);
+            var parkService = new ParkService(parkRepository, bookingRepository);
             var bookingService = new BookingService(bookingRepository, parkRepository);
 
             var resultBooking = await bookingService.GetParkBookings(5);
@@ -110,7 +110,7 @@ namespace Tests
 
             var parkRepository = new ParkRepository(new DatabaseContext(options));
             var bookingRepository = new BookingRepository(new DatabaseContext(options));
-            var parkService = new ParkService(parkRepository);
+            var parkService = new ParkService(parkRepository, bookingRepository);
             var bookingService = new BookingService(bookingRepository, parkRepository);
 
             var resultBooking = await bookingService.GetBookings();
@@ -145,7 +145,7 @@ namespace Tests
 
             var parkRepository = new ParkRepository(new DatabaseContext(options));
             var bookingRepository = new BookingRepository(new DatabaseContext(options));
-            var parkService = new ParkService(parkRepository);
+            var parkService = new ParkService(parkRepository, bookingRepository);
             var bookingService = new BookingService(bookingRepository, parkRepository);
 
             BookingResponseDTO? addedBooking = null;
@@ -182,7 +182,7 @@ namespace Tests
 
             var parkRepository = new ParkRepository(new DatabaseContext(options));
             var bookingRepository = new BookingRepository(new DatabaseContext(options));
-            var parkService = new ParkService(parkRepository);
+            var parkService = new ParkService(parkRepository, bookingRepository);
             var bookingService = new BookingService(bookingRepository, parkRepository);
 
             bool isRemoved = await bookingService.RemoveBooking(11);
