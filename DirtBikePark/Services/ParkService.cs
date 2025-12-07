@@ -65,15 +65,15 @@ namespace DirtBikePark.Services
             if (numberOfGuests <= 0)
                 throw new ArgumentException("Number of guests must be a positive value.");
 
-            // Retrieve the park from the database, check if it exists
+            // Retrieve the park from the database, verifying it exists
             var park = await _parkRepository.Parks.FindAsync(parkId);
             if (park == null)
                 throw new KeyNotFoundException($"Park with ID {parkId} not found.");
 
             // Update guest limit
             park.GuestLimit = numberOfGuests;
-            // _parkRepository.UpdatePark(park);       <------  might be needed, might not. im not 100% sure with EF Core tracking
-            await _parkRepository.SaveAsync();       //<------ i think this updates the parks info though, just double checking
+            // _parkRepository.UpdatePark(park);       <------  might be needed, might not. im not 100% sure with EF Core tracking.
+            await _parkRepository.SaveAsync();       //<------ i think this updates the parks info though, just double checking to make sure
             return true;
         }
 
