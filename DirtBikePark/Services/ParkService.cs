@@ -58,7 +58,25 @@ namespace DirtBikePark.Services
             _parkRepository.Save();
             return Task.FromResult(true);
 		}
-		
+
+        public async Task<bool> AddGuestLimitToParkAsync(int parkId, int numberOfGuests)
+        {
+            // Validate number of guests
+            if (numberOfGuests <= 0)
+                throw new ArgumentException("Number of guests must be a positive value.");
+
+            // Retrieve the park from the database, check if it exists
+            var park = await _parkRepository.Parks.FindAsync(parkId);
+            if (park == null)
+                throw new KeyNotFoundException($"Park with ID {parkId} not found.");
+
+            // Update guest limit
+            park.GuestLimit = numberOfGuests;
+            // _parkRepository.UpdatePark(park);       <------  might be needed, might not. im not 100% sure with EF Core tracking
+            await _parkRepository.SaveAsync();       //<------ i think this updates the parks info though, just double checking
+            return true;
+        }
+
 		public Task<bool> RemovePark(int parkId)
 		{
             // Check if there is a park in the database with the given ID and return failure if not
