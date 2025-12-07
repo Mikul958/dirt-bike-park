@@ -34,7 +34,7 @@ namespace DirtBikePark.Controllers
         [HttpPost("{cartId}/add")]
         public async Task<IActionResult> AddBookingToCart([FromRoute] string cartId, [PositiveId][FromQuery] int parkId, [PositiveId][FromQuery] int bookingId)
         {
-            // Verify that provided Guid is valid
+            // Verify that the provided cartId is a valid Guid
             Guid processedCartId;
             if (!Guid.TryParse(cartId, out processedCartId))
                 return BadRequest("Could not find a cart with the provided cart ID");
@@ -56,7 +56,7 @@ namespace DirtBikePark.Controllers
         [HttpPut("{cartId}/remove")]
         public async Task<IActionResult> RemoveBookingFromCart([FromRoute] string cartId, [PositiveId][FromQuery] int bookingId)
         {
-            // Verify that provided Guid is valid
+            // Verify that the provided cartId is a valid Guid
             Guid processedCartId;
             if (!Guid.TryParse(cartId, out processedCartId))
                 return BadRequest("Could not find a cart with the provided cart ID");
@@ -72,6 +72,28 @@ namespace DirtBikePark.Controllers
                 return BadRequest(ex.Message);
             }
 
+        }
+
+        // POST {protocol}://{urlBase}/api/cart/{cartId}/payment?cardNumber={cardNumber}&exp={exp}&cardHolderName={cardHolderName}&ccv={ccv}
+        [HttpPost("{cardId}/payment")]
+        public async Task<IActionResult> ProcessPayment([FromRoute] string cartId, [FromQuery] string cardNumber, [FromQuery] DateOnly exp, [FromQuery] string cardHolderName, [FromQuery] string ccv)
+        {
+            // Verify that the provided cartId is a valid Guid
+            Guid processedCartId;
+            if (!Guid.TryParse(cartId, out processedCartId))
+                return BadRequest("Could not find a cart with the provded cart ID");
+
+            // Pack card info into a Payment object and call service
+            PaymentInfo paymentInfo = new PaymentInfo(cardNumber, ccv, cardHolderName, exp);
+            try
+            {
+                bool paymentSuccess = await _cartService.ProcessPayment(processedCartId, paymentInfo);
+                return Ok(paymentSuccess);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

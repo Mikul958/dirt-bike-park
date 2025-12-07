@@ -2,6 +2,9 @@
 using DirtBikePark.Interfaces;
 using DirtBikePark.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Numerics;
+using System.Text.RegularExpressions;
 
 namespace DirtBikePark.Services
 {
@@ -80,6 +83,57 @@ namespace DirtBikePark.Services
             _bookingRepository.Save();
 
             return Task.FromResult(true);
+        }
+
+        public Task<bool> ProcessPayment(Guid cartId, PaymentInfo paymentInfo)
+        {
+            // Check that the provided cart exists and contains at least one booking
+            Cart? retrievedCart = _cartRepository.GetCart(cartId);
+            if (retrievedCart == null || retrievedCart.Bookings.Count == 0)
+                throw new InvalidOperationException("Cart with ID {cartId} does not exist or is empty.");
+
+            // Validate credit card number
+            if (paymentInfo.CardNumber.IsNullOrEmpty())
+                throw new InvalidOperationException("No card number provided.");
+            paymentInfo.CardNumber = Regex.Replace(paymentInfo.CardNumber, "[^0-9]", "");
+            if (!LuhnCheck(paymentInfo.CardNumber))
+                throw new InvalidOperationException("Invalid card number.");
+
+            // Validate CCV
+            int parsedCCV = 0;
+            if (paymentInfo.Ccv.Length < 3 || paymentInfo.Ccv.Length > 4 || !int.TryParse(paymentInfo.Ccv, out parsedCCV))
+                throw new InvalidOperationException("Invalid CCV.");
+            if (parsedCCV < 0 || parsedCCV > 9999)
+                throw new InvalidOperationException("Invalid CCV.");
+
+            // Validate name
+            // Nothing to do here I guess
+
+            // Ensure expiration date has not passed
+            if (paymentInfo.ExpirationDate < DateOnly.FromDateTime(DateTime.Now))
+                throw new InvalidOperationException("Invalid expiration date.");
+
+            // Mark all cart bookings as true in database
+            _cartRepository.FinalizePayment(retrievedCart);
+            _cartRepository.Save();
+
+            return Task.FromResult(true);
+        }
+
+        private bool LuhnCheck(string cardNumber)
+        {
+            int luhnSum = 0;
+            bool doubleDigit = false;
+            for (int i = cardNumber.Length - 1; i >= 0; i--)
+            {
+                int current = int.Parse(cardNumber[i].ToString());
+                if (doubleDigit)
+                    current *= 2;                        // Multiply every second digit by 2 (right to left, starting with no double)
+                luhnSum += current / 10 + current % 10;  // Add digits of current element to total
+                doubleDigit = !doubleDigit;
+            }
+            
+            return (luhnSum % 10) == 0;
         }
     }
 }
