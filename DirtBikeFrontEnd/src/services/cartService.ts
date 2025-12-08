@@ -12,39 +12,39 @@ export default class CartService {
         return JSON.parse(localStorage.getItem(this.CART_KEY));
     }
 
-    addItemToCart = (newItem: Booking) => {
+    addItemToCart = (newBooking: Booking) => {
         const cart = this.loadCart() || [];
-        const itemInCart = cart.findIndex((item: Booking) => item.Park.Id === newItem.Park.Id);
-        if(itemInCart > -1) {
-            this.updateCart(cart[itemInCart], newItem);
+        const bookingInCart = cart.findIndex((booking: Booking) => booking.Park.Id === newBooking.Park.Id);
+        if(bookingInCart > -1) {
+            this.updateCart(cart[bookingInCart], newBooking);
         }
-        cart.push(newItem);
+        cart.push(newBooking);
         this.save(cart);
     }
 
-    removeItemFromCart = (remItem: Booking) => {
+    removeItemFromCart = (booking: Booking) => {
         const cart = this.loadCart();
         
-        const result = cart.filter((val: Booking) => val.Park.Id !== remItem.Park.Id)
+        const result = cart.filter((val: Booking) => val.Park.Id !== booking.Park.Id)
         this.save(result);
     }
 
-    updateCart(oldItem: Booking, newItem: Booking) {
+    updateCart(oldBooking: Booking, newBooking: Booking) {
         const cart = this.loadCart();
-        if(oldItem.Park.Id !== newItem.Park.Id) {
+        if(oldBooking.Park.Id !== newBooking.Park.Id) {
             this.save(cart);
         }
 
         //Update with new item first and then old item if it doesn't exist
         const combinedItem = {
-            Id: newItem.Id || oldItem.Id,
-            CartId: newItem.CartId || oldItem.CartId,
-            ParkId: newItem.ParkId || oldItem.ParkId,
-            Park: newItem.Park || oldItem.Park,
-            Date: newItem.Date || oldItem.Date,
-            NumAdults: newItem.NumAdults || oldItem.NumAdults,
-            NumChildren: newItem.NumChildren || oldItem.NumChildren,
-            TotalPrice: newItem.TotalPrice || oldItem.TotalPrice
+            Id: newBooking.Id || oldBooking.Id,
+            CartId: newBooking.CartId || oldBooking.CartId,
+            ParkId: newBooking.ParkId || oldBooking.ParkId,
+            Park: newBooking.Park || oldBooking.Park,
+            Date: newBooking.Date || oldBooking.Date,
+            NumAdults: newBooking.NumAdults || oldBooking.NumAdults,
+            NumChildren: newBooking.NumChildren || oldBooking.NumChildren,
+            TotalPrice: newBooking.TotalPrice || oldBooking.TotalPrice
         };
         const index = cart.findIndex((val: Booking) => val.Park.Id === combinedItem.Park.Id);
         if(index > -1) {
