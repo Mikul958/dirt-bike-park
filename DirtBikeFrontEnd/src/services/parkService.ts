@@ -1,10 +1,10 @@
-import IPark from "../models/park";
+import Park from "../models/park";
 
 export default class ParkService {
 
-    public parks: IPark[] = [];
+    public parks: Park[] = [];
 
-    getAllParks: () => Promise<IPark[]> = async () => {
+    getAllParks: () => Promise<Park[]> = async () => {
         const parks = mockData.map((val) => JSON.parse(JSON.stringify(val)))
         return new Promise((res) => {
             setTimeout(() => {
@@ -13,7 +13,7 @@ export default class ParkService {
         });
     };
 
-    getParkById: (id: string) => Promise<IPark> = async (id: string) => {
+    getParkById: (id: string) => Promise<Park> = async (id: string) => {
         const parks = mockData.map((val) => JSON.parse(JSON.stringify(val)));
         return new Promise((res) => {
             setTimeout(() => {

@@ -5,7 +5,7 @@ import Search from "../../components/Search/search";
 import CartService from "../../services/cartService";
 import ParkService from "../../services/parkService";
 import './home.css';
-import IPark from "../../models/park";
+import Park from "../../models/park";
 import Review from "../../models/review";
 
 interface HomeProps {
@@ -21,7 +21,7 @@ type searchParams = {
 export default function Home(props: HomeProps) {
     const { parkService } = props;
 
-    const [parks, setParks] = useState([] as IPark[])
+    const [parks, setParks] = useState([] as Park[])
     //For the purposes of this, empty string location and rating 0 will be considered default
     const [searchParams, setSearchParams] = useState({location: "", rating: 0} as searchParams)
 
@@ -50,7 +50,7 @@ export default function Home(props: HomeProps) {
         <div>
             <HeroContent /> 
             <Search searchFn={searchFn} />
-            <FeaturedParks allParks={parks.filter((park) => isNear(park.location, searchParams.location) && getAverageRating(park.reviews) > searchParams.rating)} />
+            <FeaturedParks allParks={parks.filter((park) => isNear(park.Location, searchParams.location) && getAverageRating(park.Reviews) > searchParams.rating)} />
         </div>
     )
 }

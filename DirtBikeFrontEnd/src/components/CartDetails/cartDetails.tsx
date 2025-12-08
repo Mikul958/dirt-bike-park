@@ -1,6 +1,6 @@
 import CartService from "../../services/cartService";
 import CartCard from "../cartCard/cartCard";
-import { CartItem } from '../../models/cartItem';
+import { Booking } from '../../models/booking';
 import { useState } from "react";
 import "./cartDetails.css"
 import PaymentDetails from "../PaymentDetails/PaymentDetails";
@@ -17,9 +17,9 @@ export default function CartDetails(props: CartDetailsProps) {
     const [cart, setCart] = useState(cartService.loadCart());
     const [paymentOption, setPaymentOption] = useState("PAY_AT_PARK");
 	
-    const updateCartItem = (newCartItem: CartItem) => {
-        const item = cart.find((item: CartItem) => item.park.id === newCartItem.park.id);
-        cartService.updateCart(item, newCartItem);
+    const updateCartItem = (newBooking: Booking) => {
+        const item = cart.find((item: Booking) => item.Park.Id === newBooking.Park.Id);
+        cartService.updateCart(item, newBooking);
         setCart(cartService.loadCart());
     }
 
@@ -27,30 +27,30 @@ export default function CartDetails(props: CartDetailsProps) {
         setPaymentOption(e.target.value);
     }
 
-    const deleteCartItem = (item: CartItem) => {
-        cartService.removeItemFromCart(item);
+    const deleteCartItem = (booking: Booking) => {
+        cartService.removeItemFromCart(booking);
         handleDelete();
         setCart(cartService.loadCart());
     }
 
     const getTaxPrice = () => {
         return cart.reduce((acc, curr) => {
-            const {numAdults, numKids, park} = curr;
+            const {NumAdults, NumChildren, Park} = curr;
             return (
                 acc + 
-                    ((numAdults * 1 * park.adultPrice) + 
-                    (numKids * 1 * park.childPrice)) * 0.08 
+                    ((NumAdults * 1 * Park.PricePerAdult) + 
+                    (NumChildren * 1 * Park.PricePerChild)) * 0.08
         )
         }, 0)
     }
 
     const getTotalPrice = () => {
         return cart.reduce((acc, curr) => {
-            const {numAdults, numKids, park} = curr;
+            const {NumAdults, NumChildren, Park} = curr;
             return (
                 acc + 
-                    ((numAdults * 1 * park.adultPrice) + 
-                    (numKids * 1 * park.childPrice)) * 1.08 
+                    ((NumAdults * 1 * Park.PricePerAdult) + 
+                    (NumChildren * 1 * Park.PricePerChild)) * 1.08 
         )
         }, 0)
     }
@@ -58,7 +58,7 @@ export default function CartDetails(props: CartDetailsProps) {
     return(
         <div>
             <div className="cartItems column">
-                {cart.map(((item: CartItem) => <CartCard cartItem={item} updateFn={(e) => updateCartItem(e)} deleteFn={deleteCartItem} />))}      
+                {cart.map(((booking: Booking) => <CartCard booking={booking} updateFn={(e) => updateCartItem(e)} deleteFn={deleteCartItem} />))}      
             </div>
             <div>
                 Tax: ${getTaxPrice().toFixed(2)}

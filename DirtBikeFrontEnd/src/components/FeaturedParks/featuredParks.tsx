@@ -1,9 +1,9 @@
 import { ParkCard } from '../parkCard/parkCard';
-import IPark from '../../models/park';
+import Park from '../../models/park';
 import './featuredParks.css';
 
 interface FeaturedParksProps {
-    allParks: IPark[]
+    allParks: Park[]
 }
 
 export default function FeaturedParks(props: FeaturedParksProps) {
@@ -13,8 +13,8 @@ export default function FeaturedParks(props: FeaturedParksProps) {
         <>
             <h2>Featured Parks</h2>
             <div className="featured-park-grid">
-                {allParks.map((park: IPark) => {
-                    return <ParkCard key={`ParkID:${park.id}`} park={park} />
+                {allParks.map((park: Park) => {
+                    return <ParkCard key={`ParkID:${park.Id}`} park={park} />
                 })}
             </div>
         </>
