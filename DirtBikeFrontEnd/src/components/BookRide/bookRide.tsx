@@ -13,18 +13,18 @@ export default function BookRide(props: bookRideProps) {
     const { park, cartService, onBook } = props;
 
     const [numAdults, setNumAdults] = useState(0);
-    const [numKids, setNumKids] = useState(0)
-    const [numDays, setNumDays] = useState(1)
+    const [numKids, setNumKids] = useState(0);
+    const [dateTime, setDateTime] = useState("");
 	
 	const submitForm = () => {
-		cartService.addItemToCart({ park: park, numAdults: numAdults, numKids: numKids, numDays: numDays})
+        cartService.addItemToCart({ park: park, numAdults: numAdults, numKids: numKids, numDays: dateTime })
         onBook();
     }
 
-	//For the purposes of a realistic use case, a booking must have at least 1 adult.
+    // Removed unused totalPrice variable
 
     const getTotalPrice = () => {
-		const totalPrice = ((numAdults * park.adultPrice) + (numKids * park.childPrice)) * numDays;
+        const totalPrice = ((numAdults * park.adultPrice) + (numKids * park.childPrice));
         return `$${(isNaN(totalPrice) ? 0 : totalPrice).toFixed(2)}`;
     }
     return (park && 
@@ -39,13 +39,13 @@ export default function BookRide(props: bookRideProps) {
                     <label htmlFor="numKids"><b>Kids (${park.childPrice || 0}/day)</b></label>
                     <input className="input-field" type="number" min={0} value={numKids} placeholder="Enter number of kids..." onChange={e => setNumKids(Number.parseInt(e.target.value))} />
                 </div>
-                <div className="days days-number">
-                    <label htmlFor="numDays"><b>Days</b></label>
-                    <input className="input-field" type="number" min={1} value={numDays} placeholder="Enter days..." onChange={e => setNumDays(Number.parseInt(e.target.value))} /> 
+                <div className="days days-datetime">
+                    <label htmlFor="dateTime"><b>Date</b></label>
+                    <input className="input-field" type="date" id="dateTime" value={dateTime} onChange={e => setDateTime(e.target.value)} />
                 </div>
             </div>
             <hr />
             <div className="total-price"><b>Total: {getTotalPrice()}</b></div>
-			<button onClick={e => submitForm()} className="button-add-to-cart" disabled={numAdults === 0}>Add to Cart</button>
+            <button onClick={e => submitForm()} className="button-add-to-cart" disabled={numAdults === 0}>Add to Cart</button>
         </div>)
 }
