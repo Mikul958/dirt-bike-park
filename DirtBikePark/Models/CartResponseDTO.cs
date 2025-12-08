@@ -5,7 +5,7 @@
         public Guid Id { get; set; }
         public decimal TaxRate { get; set; }
         public List<BookingResponseDTO> Bookings { get; set; } = new List<BookingResponseDTO>();
-        public decimal TotalPrice;
+        public decimal TotalPrice { get; set; }
 
         public CartResponseDTO(Cart cartModel)
         {
