@@ -1,6 +1,7 @@
 using DirtBikePark.Data;
 using DirtBikePark.Interfaces;
 using DirtBikePark.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -59,22 +60,22 @@ namespace DirtBikePark.Services
             return Task.FromResult(true);
 		}
 
-        public async Task<bool> AddGuestLimitToParkAsync(int parkId, int numberOfGuests)
+        public Task<bool> AddGuestLimitToPark(int parkId, int numberOfGuests)
         {
             // Validate number of guests
             if (numberOfGuests <= 0)
                 throw new ArgumentException("Number of guests must be a positive value.");
 
-            // Retrieve the park from the database, verifying it exists
-            var park = await _parkRepository.Parks.FindAsync(parkId);
+            // Retrieve the park from the database, verify it exists
+            Park? park = _parkRepository.GetPark(parkId);
             if (park == null)
-                throw new KeyNotFoundException($"Park with ID {parkId} not found.");
+                throw new InvalidOperationException($"Park with ID {parkId} not found.");
 
             // Update guest limit
             park.GuestLimit = numberOfGuests;
-            // _parkRepository.UpdatePark(park);       <------  might be needed, might not. im not 100% sure with EF Core tracking.
-            await _parkRepository.SaveAsync();       //<------ i think this updates the parks info though, just double checking to make sure
-            return true;
+            _parkRepository.UpdatePark(park); // Update the park in the repository
+            _parkRepository.Save(); // Save changes to the database
+            return Task.FromResult(true);
         }
 
 		public Task<bool> RemovePark(int parkId)

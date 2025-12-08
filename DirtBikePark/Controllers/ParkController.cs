@@ -68,21 +68,18 @@ namespace DirtBikePark.Controllers
 
         // POST {protocol}://{urlBase}/api/park/{parkId}/guestlimit
         [HttpPost("{parkId}/guestlimit")]
-        public async Task<IActionResult> AddGuestLimitToPark([FromRoute] int parkId, [FromBody] GuestLimitInputDTO input)
+        public async Task<IActionResult> AddGuestLimitToPark([FromRoute] int parkId, [FromBody] int guestLimit)
         {
-            // Validate that input is not null.
-            if (input == null)
-                return BadRequest("Request body can not be null.");
             // Validate that the parkId is valid.
             if (parkId <= 0)
                 return BadRequest("Park id is invalid.");
             // Validate that the number of guests is valid.
-            if (input.NumberOfGuests <= 0)
+            if (guestLimit <= 0)
                 return BadRequest("Number of guests must be greater than zero.");
             try
             {
                 // Call service
-                bool success = await _parkService.AddGuestLimitToParkAsync(parkId, input.NumberOfGuests);
+                bool success = await _parkService.AddGuestLimitToPark(parkId, guestLimit);
                 return Ok(success);
             }
             catch (ArgumentException ex)
