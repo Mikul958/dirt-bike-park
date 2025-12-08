@@ -75,7 +75,7 @@ namespace DirtBikePark.Controllers
         }
 
         // POST {protocol}://{urlBase}/api/cart/{cartId}/payment?cardNumber={cardNumber}&exp={exp}&cardHolderName={cardHolderName}&ccv={ccv}
-        [HttpPost("{cardId}/payment")]
+        [HttpPost("{cartId}/payment")]
         public async Task<IActionResult> ProcessPayment([FromRoute] string cartId, [FromQuery] string cardNumber, [FromQuery] DateOnly exp, [FromQuery] string cardHolderName, [FromQuery] string ccv)
         {
             // Verify that the provided cartId is a valid Guid
