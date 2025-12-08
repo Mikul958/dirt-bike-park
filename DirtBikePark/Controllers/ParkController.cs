@@ -56,8 +56,10 @@ namespace DirtBikePark.Controllers
                 return BadRequest("Park can not be null.");
             try
             {
-                bool success = await _parkService.AddPark(park);  // Note: removing returned object for now since project just says to return success or failure
-                return Ok(success);
+                ParkResponseDTO createdPark = await _parkService.AddPark(park);
+
+                // Return 201 created with route associated with GetBooking + supplied bookingId and a corresponding BookingResponseDTO in the body
+                return CreatedAtAction(nameof(GetPark), new { parkId = createdPark.Id }, createdPark);
             }
             catch (ArgumentException ex)
             {
@@ -73,7 +75,7 @@ namespace DirtBikePark.Controllers
             try
             {
                 bool removed = await _parkService.RemovePark(parkId);
-                return Ok(removed);
+                return NoContent();
             }
             catch (InvalidOperationException ex)
             {

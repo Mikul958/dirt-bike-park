@@ -34,13 +34,12 @@ namespace DirtBikePark.Services
                 .Select(park => new ParkResponseDTO(park));
 
             if (parks.IsNullOrEmpty())
-            {
                 throw new InvalidOperationException("There are no parks in the database currently");
-            }
+
             return Task.FromResult(parks);
         }
 
-        public Task<bool> AddPark(ParkInputDTO parkInfo)
+        public Task<ParkResponseDTO> AddPark(ParkInputDTO parkInfo)
         {
             // Validate that the park exists and it has been created with a name
             if (parkInfo == null || string.IsNullOrWhiteSpace(parkInfo.Name))
@@ -56,7 +55,7 @@ namespace DirtBikePark.Services
             // Add the new park to the database
 			_parkRepository.AddPark(park);
             _parkRepository.Save();
-            return Task.FromResult(true);
+            return Task.FromResult(new ParkResponseDTO(park));
 		}
 		
 		public Task<bool> RemovePark(int parkId)

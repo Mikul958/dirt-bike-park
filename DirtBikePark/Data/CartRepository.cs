@@ -20,7 +20,8 @@ namespace DirtBikePark.Data
         public Cart? GetCart(Guid? cartId)
         {
             return _context.Carts
-                .Include(cart => cart.Bookings)
+                .Include(cart => cart.Bookings
+                    .Where(booking => !booking.IsPaidFor))  // Filter bookings to bookings that have not been paid for / finalized
                 .ThenInclude(booking => booking.Park)
                 .FirstOrDefault(cart => cart.Id == cartId);
         }

@@ -48,7 +48,7 @@ namespace Tests
             var bookingService = new BookingService(bookingRepository, parkRepository);
             var cartService = new CartService(cartRepository,bookingRepository,parkRepository);
 
-            Cart resultCart = await cartService.GetCart(guid);
+            CartResponseDTO resultCart = await cartService.GetCart(guid);
 
             //Assert
             Assert.NotNull(resultCart);
@@ -80,7 +80,7 @@ namespace Tests
             var bookingService = new BookingService(bookingRepository, parkRepository);
             var cartService = new CartService(cartRepository, bookingRepository, parkRepository);
 
-            Cart resultCart = await cartService.GetCart(Guid.Empty);
+            CartResponseDTO resultCart = await cartService.GetCart(Guid.Empty);
 
             //Assert
             Assert.NotEqual(Guid.Empty, resultCart.Id);
@@ -97,7 +97,7 @@ namespace Tests
             var park = new Park { Id = 3, Name = "Park Three", Description = "It's pretty green.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m };
             var guid = Guid.NewGuid();
             var cart = new Cart { Id = guid };
-            var booking = new Booking { Id = 10, CartId = null, ParkId = 3, Date = new DateOnly(2025, 12, 12), NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
+            var booking = new Booking { Id = 10, CartId = null, ParkId = 3, Date = DateOnly.FromDateTime(DateTime.Now), NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
 
 
             using (var context = new DatabaseContext(options))

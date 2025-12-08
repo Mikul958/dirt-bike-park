@@ -18,7 +18,7 @@ namespace DirtBikePark.Services
             _parkRepository = parkRepository;
         }
 
-        public Task<Cart> GetCart(Guid? cartId)
+        public Task<CartResponseDTO> GetCart(Guid? cartId)
         {
             // If a cartId was not provided, generate a new Guid and assign it
             if (cartId == null)
@@ -37,27 +37,31 @@ namespace DirtBikePark.Services
                 _cartRepository.Save();
             }
 
-            return Task.FromResult(cart);
+            CartResponseDTO cartResponse = new CartResponseDTO(cart);
+            return Task.FromResult(cartResponse);
         }
 
         public Task<bool> AddBookingToCart(Guid cartId, int parkId, int bookingId)
         {
             // Check that the provided park exists
             if (_parkRepository.GetPark(parkId) == null)
-                return Task.FromResult(false);  // Maybe add throws
+                throw new InvalidOperationException($"Park with ID {parkId} not found.");
 
             // Check that the provided booking exists and is not already in a cart
             Booking? retrievedBooking = _bookingRepository.GetBooking(bookingId);
-            if (retrievedBooking == null || retrievedBooking.CartId != null)
-                return Task.FromResult(false);
+            if (retrievedBooking == null)
+                throw new InvalidOperationException($"Booking with ID {bookingId} not found.");
+            if (retrievedBooking.CartId != null)
+                throw new InvalidOperationException($"Booking with ID {bookingId} is already in a cart.");
 
             // Check that the provided cart exists
-            if (_cartRepository.GetCart(cartId) == null)
-                return Task.FromResult(false);
+            Cart? retrievedCart = _cartRepository.GetCart(cartId);
+            if (retrievedCart == null)
+                throw new InvalidOperationException($"Cart with ID {cartId} not found.");
 
             // Update parkId and cartId with provided values
             retrievedBooking.CartId = cartId;
-            //retrievedBooking.ParkId = parkId;
+            retrievedBooking.ParkId = parkId;
             _bookingRepository.Save();
 
             return Task.FromResult(true);
@@ -66,8 +70,15 @@ namespace DirtBikePark.Services
         {
             // Check that the provided booking exists and is already in the provided cart
             Booking? retrievedBooking = _bookingRepository.GetBooking(bookingId);
-            if (retrievedBooking == null || retrievedBooking.CartId != cartId)
-                return Task.FromResult(false);
+            if (retrievedBooking == null)
+                throw new InvalidOperationException($"Booking with ID {bookingId} not found.");
+            if (retrievedBooking.CartId != cartId)
+                throw new InvalidOperationException($"Booking with ID {bookingId} is not in the specified cart.");
+
+            // Check that the provided cart exists
+            Cart? retrievedCart = _cartRepository.GetCart(cartId);
+            if (retrievedCart == null)
+                throw new InvalidOperationException($"Cart with ID {cartId} not found.");
 
             // Wipe the cartId to break the link between booking and cart
             retrievedBooking.CartId = null;

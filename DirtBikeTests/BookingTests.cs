@@ -8,6 +8,7 @@ using System;
 using Xunit;
 using System.Linq;
 using DirtBikePark.Services;
+using System.Diagnostics;
 
 namespace Tests
 {
@@ -17,7 +18,7 @@ namespace Tests
         public void Can_Create_Booking()
         {
             var emptyBooking = new Booking();
-            var booking = new Booking { Id = 10, CartId = null, ParkId = 3, Date = new DateOnly(2025, 12, 12), NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
+            var booking = new Booking { Id = 10, CartId = null, ParkId = 3, Date = DateOnly.FromDateTime(DateTime.Now), NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
 
 
             Assert.NotNull(booking);
@@ -38,7 +39,7 @@ namespace Tests
             {
                 var park = new Park { Id = 3, Name = "Test Park" };
                 context.Parks.Add(park);
-                var booking = new Booking { Id = 10, CartId = null, ParkId = 3, Date = new DateOnly(2025, 12, 11), NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
+                var booking = new Booking { Id = 10, CartId = null, ParkId = 3, Date = DateOnly.FromDateTime(DateTime.Now), NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
                 context.Bookings.Add(booking);
                 context.SaveChanges();
             }
@@ -66,7 +67,7 @@ namespace Tests
 
             using (var context = new DatabaseContext(options))
             {
-                var booking = new Booking { Id = 10, CartId = null, ParkId = 3, Date = new DateOnly(2025, 12, 15), NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
+                var booking = new Booking { Id = 10, CartId = null, ParkId = 3, Date = DateOnly.FromDateTime(DateTime.Now), NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m };
                 context.Bookings.Add(booking);
                 context.SaveChanges();
             }
@@ -96,8 +97,8 @@ namespace Tests
                 };
             var bookings = new List<Booking>
                 {
-                    new Booking { Id = 10, CartId = null, ParkId = 3, Date = new DateOnly(2025, 12, 25), NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m },
-                    new Booking {Id = 11, CartId =null, ParkId = 1, Date = new DateOnly(2025, 12, 25), NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m}
+                    new Booking { Id = 10, CartId = null, ParkId = 3, Date = DateOnly.FromDateTime(DateTime.Now), NumAdults = 2, NumChildren = 1, TotalPrice = 40.00m },
+                    new Booking {Id = 11, CartId =null, ParkId = 1, Date = DateOnly.FromDateTime(DateTime.Now), NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m}
                 };
 
             using (var context = new DatabaseContext(options))
@@ -134,7 +135,7 @@ namespace Tests
                .Options;
 
             var park = new Park { Id = 1, Name = "Park One", Description = "There are a lot of trees.", GuestLimit = 100, PricePerAdult = 25.00m, PricePerChild = 15.00m };
-            var booking = new BookingInputDTO { Date = new DateOnly(2025, 11, 11), NumAdults = 3, NumChildren = 0 };
+            var booking = new BookingInputDTO { Date = DateOnly.FromDateTime(DateTime.Now), NumAdults = 3, NumChildren = 0 };
 
             using (var context = new DatabaseContext(options))
             {
@@ -147,10 +148,18 @@ namespace Tests
             var parkService = new ParkService(parkRepository);
             var bookingService = new BookingService(bookingRepository, parkRepository);
 
-            bool isAdded = await bookingService.CreateBooking(1, booking);
+            BookingResponseDTO? addedBooking = null;
+            try
+            {
+                addedBooking = await bookingService.CreateBooking(1, booking);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine(ex.StackTrace);  // Gets rid of warning
+            }
 
             //Assert
-            Assert.True(isAdded);
+            Assert.True(addedBooking != null);
         }
 
         [Fact]
@@ -162,7 +171,7 @@ namespace Tests
                .Options;
 
             var park = new Park { Id = 1, Name = "Test Park" };
-            var booking = new Booking { Id = 11, CartId = null, ParkId = 1, Date = new DateOnly(2026, 2, 4), NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m };
+            var booking = new Booking { Id = 11, CartId = null, ParkId = 1, Date = DateOnly.FromDateTime(DateTime.Now), NumAdults = 3, NumChildren = 0, TotalPrice = 45.00m };
 
             using (var context = new DatabaseContext(options))
             {

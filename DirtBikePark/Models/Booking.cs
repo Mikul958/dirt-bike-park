@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DirtBikePark.Models
@@ -19,6 +20,7 @@ namespace DirtBikePark.Models
         public DateOnly Date { get; set; }
         public int NumAdults { get; set; }
         public int NumChildren { get; set; }
+        [Precision(18,2)]
         public decimal TotalPrice { get; set; }
         public bool IsPaidFor { get; set; }
     }
