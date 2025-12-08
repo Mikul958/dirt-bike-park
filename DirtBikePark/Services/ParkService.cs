@@ -87,7 +87,7 @@ namespace DirtBikePark.Services
 
             // Check if there is a park in the database with the given ID and return failure if not
             Park? park = _parkRepository.GetPark(parkId);
-            if (park == null)                                                               // might not be needed because of checking within GetPark?
+            if (park == null)
                 throw new InvalidOperationException($"Park with ID {parkId} not found.");
 
             // Assign values then update and save

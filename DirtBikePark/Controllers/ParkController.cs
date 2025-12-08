@@ -75,28 +75,13 @@ namespace DirtBikePark.Controllers
             // Validate request body
             if (newPark == null)
                 return BadRequest("Request Body can not be null.");
-            // Validate parkId and newPark properties
-            if (parkId <= 0)
-                return BadRequest("Park ID is invalid.");
-            if (newPark.PricePerAdult < 0)
-                return BadRequest("Price per adult must be a positive value.");
-            if (newPark.PricePerChild < 0)
-                return BadRequest("Price per child must be a positive value.");
-            if (newPark.GuestLimit <= 0)
-                return BadRequest("Guest limit must be at least 1.");
             try
             {
                 bool success = await _parkService.EditPark(parkId, newPark);
                 return Ok(success);
             }
-            catch (ArgumentException ex)
+            catch (InvalidOperationException ex)
             {
-                // Handles invalid arguments
-                return BadRequest(ex.Message);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                // Handles park not found
                 return NotFound(ex.Message);
             }
         }
