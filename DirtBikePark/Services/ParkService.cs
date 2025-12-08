@@ -98,6 +98,7 @@ namespace DirtBikePark.Services
             _parkRepository.Save();
 
             return Task.FromResult(true);
+        }
 
         public Task<bool> AddGuestLimitToPark(int parkId, int numberOfGuests)
         {
