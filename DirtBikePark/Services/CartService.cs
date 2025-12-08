@@ -101,7 +101,7 @@ namespace DirtBikePark.Services
             if (paymentInfo.CardNumber.IsNullOrEmpty())
                 throw new InvalidOperationException("No card number provided.");
             paymentInfo.CardNumber = Regex.Replace(paymentInfo.CardNumber, "[^0-9]", "");
-            if (!LuhnCheck(paymentInfo.CardNumber))
+            if (paymentInfo.CardNumber.Length < 8 || paymentInfo.CardNumber.Length > 24 || !LuhnCheck(paymentInfo.CardNumber))  // Length check is just to keep length reasonable
                 throw new InvalidOperationException("Invalid card number.");
 
             // Validate CCV
