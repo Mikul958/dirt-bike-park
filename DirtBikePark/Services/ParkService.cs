@@ -1,6 +1,7 @@
 using DirtBikePark.Data;
 using DirtBikePark.Interfaces;
 using DirtBikePark.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -59,7 +60,7 @@ namespace DirtBikePark.Services
             _parkRepository.Save();
             return Task.FromResult(new ParkResponseDTO(park));
 		}
-		
+
 		public Task<bool> RemovePark(int parkId)
 		{
             // Check if there is a park in the database with the given ID and return failure if not
@@ -72,6 +73,24 @@ namespace DirtBikePark.Services
             _parkRepository.Save();
 			return Task.FromResult(true);
 		}
+
+        public Task<bool> AddGuestLimitToPark(int parkId, int numberOfGuests)
+        {
+            // Validate number of guests
+            if (numberOfGuests < 0)
+                throw new InvalidOperationException("Number of guests must be non-negative.");
+
+            // Retrieve the park from the database, verify it exists
+            Park? park = _parkRepository.GetPark(parkId);
+            if (park == null)
+                throw new InvalidOperationException($"Park with ID {parkId} not found.");
+
+            // Update guest limit and update park in the database
+            park.GuestLimit = numberOfGuests;
+            _parkRepository.UpdatePark(park);
+            _parkRepository.Save();
+            return Task.FromResult(true);
+        }
 
         public Task<bool> RemoveGuestsFromPark(int parkId, DateOnly date, int numberOfGuests)
         {

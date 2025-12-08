@@ -10,7 +10,5 @@ namespace DirtBikePark.Interfaces
         void AddPark(Park park);
         void UpdatePark(Park park);
         void Save();
-
     }
-
 }
