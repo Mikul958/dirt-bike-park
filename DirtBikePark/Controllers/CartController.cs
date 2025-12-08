@@ -21,12 +21,15 @@ namespace DirtBikePark.Controllers
         public async Task<IActionResult> GetCart([FromRoute] string? cartId)
         {
             // Verify that the provided Guid is valid (if it isn't null)
-            Guid processedCartId = Guid.Empty;
-            if (cartId != null && !Guid.TryParse(cartId, out processedCartId))
-                return BadRequest("Could not find a cart with the provided cart ID");
+            Guid parsedCartId = Guid.Empty;
+            Guid? finalCartId = null;
+            if (cartId != null && Guid.TryParse(cartId, out parsedCartId))
+                finalCartId = parsedCartId;
+            else
+                finalCartId = null;
 
             // Retrieve cart through service
-            CartResponseDTO cart = await _cartService.GetCart(processedCartId);
+            CartResponseDTO cart = await _cartService.GetCart(finalCartId);
             return Ok(cart);
         }
 

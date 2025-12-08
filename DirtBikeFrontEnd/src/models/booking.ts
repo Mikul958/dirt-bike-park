@@ -2,12 +2,12 @@ import Park from "./park";
 
 export interface Booking
 {
-    Id: number;
-    CartId: string;
-    ParkId: number;
-    Park: Park;
-    Date: string;
-    NumAdults: number;
-    NumChildren: number;
-    TotalPrice: number;
+    id: number;
+    cartId: string;
+    parkId: number;
+    park: Park;
+    date: string;
+    numAdults: number;
+    numChildren: number;
+    totalPrice: number;
 }

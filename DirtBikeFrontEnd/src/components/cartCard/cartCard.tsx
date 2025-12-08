@@ -21,23 +21,23 @@ export default function CartCard(props: cartCardProps) {
 	return (
 		<div className="card-body">
 			<div className="card left-column">
-				<img src={booking.Park.ImageUrl} alt={booking.Park.Name} className="card-image" />
+				<img src={booking.park.imageUrl} alt={booking.park.name} className="card-image" />
 			</div>
 			<div className="card right-column">
 				<h2 className="card-title">
-					{booking.Park.Name}
+					{booking.park.name}
 				</h2>
 				<h3 className="card-subtitle">
-					{booking.Date}
+					{booking.date}
 				</h3>
 				<div>
-					Location: {booking.Park.Location}
+					Location: {booking.park.location}
 				</div>
 				<div>
-					Adults: <input name="numAdults" value={booking.NumAdults} onChange={handleChange}/> x ${booking.Park.PricePerAdult} = ${(booking.NumAdults * booking.Park.PricePerAdult).toFixed(2)}
+					Adults: <input name="numAdults" value={booking.numAdults} onChange={handleChange}/> x ${booking.park.pricePerAdult} = ${(booking.numAdults * booking.park.pricePerAdult).toFixed(2)}
 				</div>
 				<div>
-					Children: <input name="numKids" value={booking.NumChildren} onChange={handleChange}/> x ${booking.Park.PricePerChild} = ${(booking.NumChildren * booking.Park.PricePerChild).toFixed(2)}
+					Children: <input name="numKids" value={booking.numChildren} onChange={handleChange}/> x ${booking.park.pricePerChild} = ${(booking.numChildren * booking.park.pricePerChild).toFixed(2)}
 				</div>
 			</div>
 			<button className="delete-button" onClick={() => deleteFn(booking)}>

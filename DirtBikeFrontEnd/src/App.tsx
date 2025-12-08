@@ -29,7 +29,7 @@ function App() {
   return (
       <div className="App">
         <div className="header content">
-          <Homebar numItems={cart ? cart.Bookings.length : 0} />
+          <Homebar numItems={cart ? cart.bookings.length : 0} />
         </div>
         <Routes>
           <Route path="/*" element={<Home parkService={parkService} cartService={cartService} />} />

@@ -33,38 +33,38 @@ export default function DetailsPage(props: detailsPageProps) {
     }
 
     const getAverageRating = () => {
-        if(park.Reviews) {
-            const sum = park.Reviews.reduce((acc, curr) => acc + curr.rating, 0)
-            return (sum / (park.Reviews.filter((review) => review.active || true).length || 0));
+        if(park.reviews) {
+            const sum = park.reviews.reduce((acc, curr) => acc + curr.rating, 0)
+            return (sum / (park.reviews.filter((review) => review.active || true).length || 0));
         }
         return 0;
     }
 
     return (park && <div className="details-container">
-            <img className="details-image" src={park.ImageUrl} alt={park.Name} />
+            <img className="details-image" src={park.imageUrl} alt={park.name} />
             <div className="details-two-column">
                 <div className="column details-left-column">
-                    <h2 className="details-header">{park.Name}</h2>
+                    <h2 className="details-header">{park.name}</h2>
                     <div className="details-subheader">
                         <div className="location-subheader">
                             <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                            <div className="location">{park.Location}</div>
+                            <div className="location">{park.location}</div>
                         </div>
                         <div className="rating-block card">
                             <div className="star-rating">
                                 {getStarRating()}
                             </div>
-                            <div className="average-rating text">{getAverageRating().toFixed(2)} &#40;{park.Reviews?.length || 0} Reviews&#41;</div>
+                            <div className="average-rating text">{getAverageRating().toFixed(2)} &#40;{park.reviews?.length || 0} Reviews&#41;</div>
                         </div>
                     </div>
                         <h3 className="park-details">About the Park</h3>
                         <hr className="border-line" />
                         <div>
-                            {park.Description}
+                            {park.description}
                         </div>
                         <h3 className="park-reviews">Recent Reviews</h3>
                         <hr className="border-line" />
-                        {park.Reviews?.map((review) => <ReviewCard review={review} />)}
+                        {park.reviews?.map((review) => <ReviewCard review={review} />)}
                     </div>
                 <div className="column details-right-column">
                     <BookRide park={park} cartService={cartService} onBook={onBook} />

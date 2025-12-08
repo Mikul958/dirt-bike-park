@@ -50,7 +50,7 @@ export default function Home(props: HomeProps) {
         <div>
             <HeroContent /> 
             <Search searchFn={searchFn} />
-            <FeaturedParks allParks={parks.filter((park) => isNear(park.Location, searchParams.location) && getAverageRating(park.Reviews) > searchParams.rating)} />
+            <FeaturedParks allParks={parks.filter((park) => isNear(park.location, searchParams.location) && getAverageRating(park.reviews) > searchParams.rating)} />
         </div>
     )
 }

@@ -5,13 +5,13 @@ import Review from "./review";
 // and any other id system is abnormal and honestly worse in my opinion
 export default interface Park
 {
-    Id: number;
-    Name: string;
-    Location: string;
-    Description: string;
-    ImageUrl?: string;
-    PricePerAdult: number;
-    PricePerChild: number;
-    GuestLimit: number;
-    Reviews: Review[];
+    id: number;
+    name: string;
+    location: string;
+    description: string;
+    imageUrl?: string;
+    pricePerAdult: number;
+    pricePerChild: number;
+    guestLimit: number;
+    reviews: Review[];
 }

@@ -17,7 +17,7 @@ export default class ParkService {
         const parks = mockData.map((val) => JSON.parse(JSON.stringify(val)));
         return new Promise((res) => {
             setTimeout(() => {
-                res(parks.find((park: Park) => park.Id.toString() === id))
+                res(parks.find((park: Park) => park.id.toString() === id))
             }, 500)
         })
     }
@@ -25,15 +25,15 @@ export default class ParkService {
 
 const mockData: Park[] = [
     {
-        "Name": "Motobike Mayhem",
-        "Id": 1,
-        "Location": "Springwood, CO",
-        "Description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        "PricePerAdult": 25,
-        "PricePerChild": 15,
-        "ImageUrl": "https://placehold.co/600x400/334155/FFF?text=Motobike+Mayhem",
-        "GuestLimit": 20,
-        "Reviews": [
+        "name": "Motobike Mayhem",
+        "id": 1,
+        "location": "Springwood, CO",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        "pricePerAdult": 25,
+        "pricePerChild": 15,
+        "imageUrl": "https://placehold.co/600x400/334155/FFF?text=Motobike+Mayhem",
+        "guestLimit": 20,
+        "reviews": [
             {
                 "author": {
                     "id": "17fa0861-d120-4cd8-a24b-f9a579ecbf17",
@@ -85,15 +85,15 @@ const mockData: Park[] = [
         ]
     },
     {
-        "Name": "Crossbar Parkway",
-        "Id": 2,
-        "Location": "Springwood, CO",
-        "Description": "This park boasts extreme hills and fun drops for all thrill-seekers.",
-        "PricePerAdult": 25,
-        "PricePerChild": 15,
-        "ImageUrl": "https://placehold.co/600x400/3321a5/FFF?text=Crossbar+Parkway",
-        "GuestLimit": 10,
-        "Reviews": [
+        "name": "Crossbar Parkway",
+        "id": 2,
+        "location": "Springwood, CO",
+        "description": "This park boasts extreme hills and fun drops for all thrill-seekers.",
+        "pricePerAdult": 25,
+        "pricePerChild": 15,
+        "imageUrl": "https://placehold.co/600x400/3321a5/FFF?text=Crossbar+Parkway",
+        "guestLimit": 10,
+        "reviews": [
             {
                 "author": {
                     "id": "17fa0861-d120-4cd8-a24b-f9a579ecbf17",

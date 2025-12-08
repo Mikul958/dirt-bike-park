@@ -7,8 +7,13 @@ export default class CartService
     private readonly BOOKING_URL_BASE: string = "https://localhost:7226/api/booking/"
 
     private readonly CART_KEY: string = "CART_KEY";
-    private cartId: string | null = null;
-    private cart: Cart | null = null;
+    private cartId: string = "EMPTY";
+    private cart: Cart = {
+        id: "EMPTY",
+        taxRate: 0,
+        bookings: [],
+        totalPrice: 0
+    }
 
     constructor() {
         const storedCartId = localStorage.getItem(this.CART_KEY);
@@ -21,21 +26,26 @@ export default class CartService
     }
 
     loadCart = async (): Promise<Cart> => {
+        console.log("Calling: " + this.CART_URL_BASE + this.cartId);
         const res = await fetch(this.CART_URL_BASE + this.cartId)
-        if (!res.ok)
-            throw new Error("Failed to fetch cart: " + res.text());
+        if (!res.ok) {
+            const text = await res.text();
+            console.log("Failed to fetch cart with id=" + this.cartId + ", " + text)
+            throw new Error("Failed to fetch cart: " + text);
+        }
 
         this.cart = await res.json() as Cart;
-        if (this.cartId == "") {
-            this.cartId = this.cart.Id;
-            localStorage.setItem(this.CART_KEY, this.cart.Id);
+        console.log(this.cart);
+        if (this.cartId == "EMPTY") {
+            this.cartId = this.cart.id;
+            localStorage.setItem(this.CART_KEY, this.cart.id);
         }
         return this.cart;
     }
 
     addBookingToCart = async (booking: Booking) => {
         // Attempt to create booking and retrieve created booking from response
-        const bookingUrl = new URL(this.BOOKING_URL_BASE + "park/" + booking.ParkId)
+        const bookingUrl = new URL(this.BOOKING_URL_BASE + "park/" + booking.parkId)
         const bookingRes = await fetch(bookingUrl, {
             method: "POST",
             headers: {
@@ -49,8 +59,8 @@ export default class CartService
         
         // Attempt to add created booking to the cart
         const cartUrl = new URL(this.CART_URL_BASE + this.cartId + "/add")
-        cartUrl.searchParams.append("parkId", createdBooking.ParkId.toString())
-        cartUrl.searchParams.append("bookingId", createdBooking.Id.toString())
+        cartUrl.searchParams.append("parkId", createdBooking.parkId.toString())
+        cartUrl.searchParams.append("bookingId", createdBooking.id.toString())
         const cartRes = await fetch(cartUrl, {
             method: "POST",
             headers: {
@@ -72,18 +82,18 @@ export default class CartService
 
     updateCart(oldBooking: Booking, newBooking: Booking) {
         const combinedBooking = {
-            Id: newBooking.Id || oldBooking.Id,
-            CartId: newBooking.CartId || oldBooking.CartId,
-            ParkId: newBooking.ParkId || oldBooking.ParkId,
-            Park: newBooking.Park || oldBooking.Park,
-            Date: newBooking.Date || oldBooking.Date,
-            NumAdults: newBooking.NumAdults || oldBooking.NumAdults,
-            NumChildren: newBooking.NumChildren || oldBooking.NumChildren,
-            TotalPrice: newBooking.TotalPrice || oldBooking.TotalPrice
+            id: newBooking.id || oldBooking.id,
+            cartId: newBooking.cartId || oldBooking.cartId,
+            parkId: newBooking.parkId || oldBooking.parkId,
+            park: newBooking.park || oldBooking.park,
+            date: newBooking.date || oldBooking.date,
+            numAdults: newBooking.numAdults || oldBooking.numAdults,
+            numChildren: newBooking.numChildren || oldBooking.numChildren,
+            totalPrice: newBooking.totalPrice || oldBooking.totalPrice
         };
-        const index = this.cart.Bookings.findIndex((val: Booking) => val.Park.Id === combinedBooking.Park.Id);
+        const index = this.cart.bookings.findIndex((val: Booking) => val.park.id === combinedBooking.park.id);
         if(index > -1) {
-            this.cart.Bookings[index] = combinedBooking;
+            this.cart.bookings[index] = combinedBooking;
         }
     }
 }
