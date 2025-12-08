@@ -12,17 +12,25 @@ namespace DirtBikePark.Data
         {
             _context = context;
         }
+
+        public Cart? GetCart(Guid? cartId)
+        {
+            return _context.Carts
+                .Include(cart => cart.Bookings
+                    .Where(booking => !booking.IsPaidFor))  // Filter bookings to bookings that have not been paid for / finalized
+                .ThenInclude(booking => booking.Park)
+                .FirstOrDefault(cart => cart.Id == cartId);
+        }
+
         public void AddCart(Cart cart)
         {
             _context.Carts.Add(cart);
         }
 
-        public Cart? GetCart(Guid? cartId)
+        public void FinalizePayment(Cart cart)
         {
-            return _context.Carts
-                .Include(cart => cart.Bookings)
-                .ThenInclude(booking => booking.Park)
-                .FirstOrDefault(cart => cart.Id == cartId);
+            foreach (Booking booking in cart.Bookings)
+                booking.IsPaidFor = true;
         }
 
         public void Save()

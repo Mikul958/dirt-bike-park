@@ -42,32 +42,47 @@ namespace DirtBikePark.Services
             return Task.FromResult(bookingResponse);
         }
 
-        public Task<bool> CreateBooking(int parkId, BookingInputDTO bookingInfo)
+        public Task<BookingResponseDTO> CreateBooking(int parkId, BookingInputDTO bookingInfo)
         {
             // Check if a park with the given parkID exists in the database
-            if(_parkRepository.GetPark(parkId) == null)
-                return Task.FromResult(false);
+            Park? park = _parkRepository.GetPark(parkId);
+            if (park == null)
+                throw new InvalidOperationException($"Park with ID {parkId} not found.");
+
+            // Validate provided date
+            if (bookingInfo.Date < DateOnly.FromDateTime(DateTime.Now))
+                throw new InvalidOperationException($"Invalid or empty date provided: {bookingInfo.Date}");
+
+            // Validating BookingDTO input matches requested Park info
+            int totalGuests = bookingInfo.NumAdults + bookingInfo.NumChildren;
+            if (totalGuests == 0)
+                throw new InvalidOperationException($"Cannot create a Booking with no guests: {bookingInfo.NumChildren} children, {bookingInfo.NumAdults} adults");
+
+            int guestsAlreadyBooked = _bookingRepository.CountGuestsForPark(parkId, bookingInfo.Date);
+            if (guestsAlreadyBooked + totalGuests > park.GuestLimit)
+                throw new InvalidOperationException($"Cannot add this booking to this park as it would cause the number of guests to exceed the park's guest capacity on {bookingInfo.Date}");
+
+            // Calculate price based on guest count and park prices
+            decimal adultCost = bookingInfo.NumAdults * park.PricePerAdult;
+            decimal childrenCost = bookingInfo.NumChildren * park.PricePerChild;
 
             // Create a new booking with the given parkId and bookingInfo (no cart info allowed at this stage)
             Booking booking = bookingInfo.FromInputDTO();
             booking.ParkId = parkId;
+            booking.TotalPrice = adultCost + childrenCost;
 
             // Add the booking to the database
             _bookingRepository.AddBooking(booking);
             _bookingRepository.Save();
-            return Task.FromResult(true);
+            return Task.FromResult(new BookingResponseDTO(booking));
         }
 
         public Task<bool> RemoveBooking(int bookingId)
         {
-            // Reject if ID is invalid
-            if (bookingId < 0)
-                return Task.FromResult(false);
-
             // Check if there is a booking in the database with the given ID and return failure if not
             Booking? booking = _bookingRepository.GetBooking(bookingId);
             if (booking == null)
-                return Task.FromResult(false);
+                throw new InvalidOperationException($"Booking with ID {bookingId} not found.");
 
             // Remove the booking from the database
             _bookingRepository.RemoveBooking(booking);

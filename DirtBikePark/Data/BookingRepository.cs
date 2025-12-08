@@ -12,10 +12,6 @@ namespace DirtBikePark.Data
         {
             _context = context;
         }
-        public void AddBooking(Booking booking)
-        {
-            _context.Bookings.Add(booking);
-        }
 
         public Booking? GetBooking(int bookingId)
         {
@@ -37,6 +33,27 @@ namespace DirtBikePark.Data
                 .Include(booking => booking.Park)
                 .Where(booking => booking.ParkId == parkId);
             return bookings;
+        }
+
+        public int CountGuestsForPark(int parkId, DateOnly date)
+        {
+            return _context.Bookings
+                .Where(booking => booking.ParkId == parkId && booking.Date == date)
+                .Sum(booking => booking.NumAdults + booking.NumChildren);
+        }
+
+        public IEnumerable<Booking> GetBookingsForParkWithDate(int parkId, DateOnly date)
+        {
+            // Get all bookings for the provided park and date, ordering descending by ID (highest ID -> most recently created)
+            return _context.Bookings
+                .Where(booking => booking.ParkId == parkId && booking.Date == date)
+                .OrderByDescending(booking => booking.Id)
+                .ToList();
+        }
+
+        public void AddBooking(Booking booking)
+        {
+            _context.Bookings.Add(booking);
         }
 
         public void RemoveBooking(Booking booking)

@@ -6,7 +6,7 @@ namespace DirtBikePark.Interfaces
     {
         Cart? GetCart(Guid? cartId);
         void AddCart(Cart cart);
-        //void RemoveCart(Guid cartId);
+        void FinalizePayment(Cart cart);
         void Save();
     }
 }

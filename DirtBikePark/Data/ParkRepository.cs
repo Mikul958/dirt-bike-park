@@ -26,7 +26,7 @@ namespace DirtBikePark.Data
 
         public IEnumerable<Park> GetParks()
         {
-            return _context.Parks;
+            return _context.Parks.ToList();
         }
 
         public void RemovePark(Park park)
