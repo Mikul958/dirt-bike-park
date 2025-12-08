@@ -17,16 +17,15 @@ export default function BookRide(props: bookRideProps) {
     const [dateTime, setDateTime] = useState("");
 	
 	const submitForm = () => {
-        cartService.addItemToCart({ Id: 0, CartId: "0", ParkId: park.Id, Park: park, NumAdults: numAdults, NumChildren: numChildren, Date: dateTime, TotalPrice: 0 })
+        cartService.addBookingToCart({ Id: 0, CartId: "0", ParkId: park.Id, Park: park, NumAdults: numAdults, NumChildren: numChildren, Date: dateTime, TotalPrice: 0 })
         onBook();
     }
 
-    // Removed unused totalPrice variable
-
     const getTotalPrice = () => {
         const totalPrice = ((numAdults * park.PricePerAdult) + (numChildren * park.PricePerChild));
-        return `$${(isNaN(totalPrice) ? 0 : totalPrice).toFixed(2)}`;
+        return (isNaN(totalPrice) ? 0 : totalPrice)
     }
+    
     return (park && 
         <div className="bookRide book-container">
             <h2>Book Your Ride</h2>

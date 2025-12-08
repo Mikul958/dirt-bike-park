@@ -5,7 +5,7 @@ import ParkDetails from './organisms/ParkDetails/parkDetails';
 import Cart from './organisms/Cart/cart'
 import ParkService from './services/parkService';
 import CartService from './services/cartService';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Homebar from './components/Homebar/homebar';
 import Footer from './components/Footer/footer';
 
@@ -13,16 +13,23 @@ function App() {
 
   const parkService = new ParkService();
   const cartService = new CartService();
-  const [cart, setCart ] = useState(cartService.loadCart());
+  const [cart, setCart] = useState(cartService.getCart());
+
+  // Load cart asynchronously when component mounts
+  useEffect(() => {
+      cartService.loadCart().then(loadedCart => {
+          setCart(loadedCart);
+      });
+  }, []);
 
   const handleChange = () => {
-    setCart(cartService.loadCart());
+    setCart(cartService.getCart());
   }
 
   return (
       <div className="App">
         <div className="header content">
-          <Homebar numItems={cart ? cart.length : 0} />
+          <Homebar numItems={cart ? cart.Bookings.length : 0} />
         </div>
         <Routes>
           <Route path="/*" element={<Home parkService={parkService} cartService={cartService} />} />

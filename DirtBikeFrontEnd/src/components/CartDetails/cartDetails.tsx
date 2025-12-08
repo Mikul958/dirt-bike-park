@@ -1,7 +1,7 @@
 import CartService from "../../services/cartService";
 import CartCard from "../cartCard/cartCard";
 import { Booking } from '../../models/booking';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./cartDetails.css"
 import PaymentDetails from "../PaymentDetails/PaymentDetails";
 
@@ -14,13 +14,16 @@ export default function CartDetails(props: CartDetailsProps) {
 	const { cartService, handleDelete } = props;
 
     //Pulling from local storage as source of truth
-    const [cart, setCart] = useState(cartService.loadCart());
+    const [cart, setCart] = useState(cartService.getCart());
     const [paymentOption, setPaymentOption] = useState("PAY_AT_PARK");
+
+    if (!cart)
+        return <div>Loading...</div>
 	
     const updateCartItem = (newBooking: Booking) => {
-        const item = cart.find((item: Booking) => item.Park.Id === newBooking.Park.Id);
+        const item = cart.Bookings.find((item: Booking) => item.Park.Id === newBooking.Park.Id);
         cartService.updateCart(item, newBooking);
-        setCart(cartService.loadCart());
+        setCart(cartService.getCart());
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,13 +31,13 @@ export default function CartDetails(props: CartDetailsProps) {
     }
 
     const deleteCartItem = (booking: Booking) => {
-        cartService.removeItemFromCart(booking);
+        cartService.removeItemFromCart(booking.Id);
         handleDelete();
-        setCart(cartService.loadCart());
+        setCart(cartService.getCart());
     }
 
     const getTaxPrice = () => {
-        return cart.reduce((acc, curr) => {
+        return cart.Bookings.reduce((acc, curr) => {
             const {NumAdults, NumChildren, Park} = curr;
             return (
                 acc + 
@@ -45,7 +48,7 @@ export default function CartDetails(props: CartDetailsProps) {
     }
 
     const getTotalPrice = () => {
-        return cart.reduce((acc, curr) => {
+        return cart.Bookings.reduce((acc, curr) => {
             const {NumAdults, NumChildren, Park} = curr;
             return (
                 acc + 
@@ -58,7 +61,7 @@ export default function CartDetails(props: CartDetailsProps) {
     return(
         <div>
             <div className="cartItems column">
-                {cart.map(((booking: Booking) => <CartCard booking={booking} updateFn={(e) => updateCartItem(e)} deleteFn={deleteCartItem} />))}      
+                {cart.Bookings.map(((booking: Booking) => <CartCard booking={booking} updateFn={(e) => updateCartItem(e)} deleteFn={deleteCartItem} />))}      
             </div>
             <div>
                 Tax: ${getTaxPrice().toFixed(2)}

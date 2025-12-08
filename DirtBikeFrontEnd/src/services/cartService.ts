@@ -1,42 +1,77 @@
 import { Booking } from "../models/booking";
+import { Cart } from "../models/cart";
 
-export default class CartService {
-    private items: Booking[];
+export default class CartService
+{
+    private readonly CART_URL_BASE: string = "https://localhost:7226/api/cart/"
+    private readonly BOOKING_URL_BASE: string = "https://localhost:7226/api/booking/"
 
-    private CART_KEY = 'rideFinderExampleApp'
+    private readonly CART_KEY: string = "CART_KEY";
+    private cartId: string | null = null;
+    private cart: Cart | null = null;
 
-
-    //loadCart will be our public facing method, all invocations of getCart should be internal so we only have one source of truth
-
-    loadCart = (): Booking[] => {
-        return JSON.parse(localStorage.getItem(this.CART_KEY));
+    constructor() {
+        const storedCartId = localStorage.getItem(this.CART_KEY);
+        if (storedCartId)
+            this.cartId = storedCartId;
     }
 
-    addItemToCart = (newBooking: Booking) => {
-        const cart = this.loadCart() || [];
-        const bookingInCart = cart.findIndex((booking: Booking) => booking.Park.Id === newBooking.Park.Id);
-        if(bookingInCart > -1) {
-            this.updateCart(cart[bookingInCart], newBooking);
+    getCart = (): Cart | null => {
+        return this.cart;
+    }
+
+    loadCart = async (): Promise<Cart> => {
+        const res = await fetch(this.CART_URL_BASE + this.cartId)
+        if (!res.ok)
+            throw new Error("Failed to fetch cart: " + res.text());
+
+        this.cart = await res.json() as Cart;
+        if (this.cartId == "") {
+            this.cartId = this.cart.Id;
+            localStorage.setItem(this.CART_KEY, this.cart.Id);
         }
-        cart.push(newBooking);
-        this.save(cart);
+        return this.cart;
     }
 
-    removeItemFromCart = (booking: Booking) => {
-        const cart = this.loadCart();
+    addBookingToCart = async (booking: Booking) => {
+        // Attempt to create booking and retrieve created booking from response
+        const bookingUrl = new URL(this.BOOKING_URL_BASE + "park/" + booking.ParkId)
+        const bookingRes = await fetch(bookingUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(booking)
+        });
+        if (!bookingRes.ok)
+            throw new Error("Failed to create booking: " + (await bookingRes.text()))
+        const createdBooking: Booking = (await bookingRes.json()) as unknown as Booking;
         
-        const result = cart.filter((val: Booking) => val.Park.Id !== booking.Park.Id)
-        this.save(result);
+        // Attempt to add created booking to the cart
+        const cartUrl = new URL(this.CART_URL_BASE + this.cartId + "/add")
+        cartUrl.searchParams.append("parkId", createdBooking.ParkId.toString())
+        cartUrl.searchParams.append("bookingId", createdBooking.Id.toString())
+        const cartRes = await fetch(cartUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        if (!cartRes.ok)
+            throw new Error("Failed to add booking to cart: " + (await cartRes.text()));
+    }
+
+    removeItemFromCart = async (bookingId: number) => {
+        const url = new URL(this.CART_URL_BASE + this.cartId + "/remove")
+        url.searchParams.append("bookingId", bookingId.toString())
+        
+        const res = await fetch(url);
+        if (!res.ok)
+            throw new Error("Failed to remove booking from cart");
     }
 
     updateCart(oldBooking: Booking, newBooking: Booking) {
-        const cart = this.loadCart();
-        if(oldBooking.Park.Id !== newBooking.Park.Id) {
-            this.save(cart);
-        }
-
-        //Update with new item first and then old item if it doesn't exist
-        const combinedItem = {
+        const combinedBooking = {
             Id: newBooking.Id || oldBooking.Id,
             CartId: newBooking.CartId || oldBooking.CartId,
             ParkId: newBooking.ParkId || oldBooking.ParkId,
@@ -46,14 +81,9 @@ export default class CartService {
             NumChildren: newBooking.NumChildren || oldBooking.NumChildren,
             TotalPrice: newBooking.TotalPrice || oldBooking.TotalPrice
         };
-        const index = cart.findIndex((val: Booking) => val.Park.Id === combinedItem.Park.Id);
+        const index = this.cart.Bookings.findIndex((val: Booking) => val.Park.Id === combinedBooking.Park.Id);
         if(index > -1) {
-            cart[index] = combinedItem;
+            this.cart.Bookings[index] = combinedBooking;
         }
-        this.save(cart);
-    }
-
-    private save(cart: Booking[]) {
-        localStorage.setItem(this.CART_KEY, JSON.stringify(cart));
     }
 }
