@@ -49,9 +49,11 @@ namespace DirtBikePark.Controllers
         }
 		
 		// POST {protocol}://{urlBase}/api/park/
-		[HttpPost]
-		public async Task<IActionResult> AddPark([FromBody] ParkInputDTO park)
-		{
+
+        // POST {protocol}://{urlBase}/api/park/
+        [HttpPost]
+        public async Task<IActionResult> AddPark([FromBody] ParkInputDTO park)
+        {
             if (park == null)
                 return BadRequest("Park can not be null.");
             try
@@ -66,7 +68,40 @@ namespace DirtBikePark.Controllers
                 return BadRequest(ex.Message);
             }
 
-		}
+        }
+
+        // PUT {protocol}://{urlBase}/api/park/{parkId}
+        [HttpPut("{parkId:int}")]
+        public async Task<IActionResult> EditPark([FromRoute] int parkId, [FromBody] ParkInputDTO newPark)
+        {
+            // Validate request body
+            if (newPark == null)
+                return BadRequest("Request Body can not be null.");
+            // Validate parkId and newPark properties
+            if (parkId <= 0)
+                return BadRequest("Park ID is invalid.");
+            if (newPark.PricePerAdult < 0)
+                return BadRequest("Price per adult must be a positive value.");
+            if (newPark.PricePerChild < 0)
+                return BadRequest("Price per child must be a positive value.");
+            if (newPark.GuestLimit <= 0)
+                return BadRequest("Guest limit must be at least 1.");
+            try
+            {
+                bool success = await _parkService.EditPark(parkId, newPark);
+                return Ok(success);
+            }
+            catch (ArgumentException ex)
+            {
+                // Handles invalid arguments
+                return BadRequest(ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                // Handles park not found
+                return NotFound(ex.Message);
+            }
+        }
 
         // DELETE {protocol}://{urlBase}/api/park/{parkId}
         [HttpDelete("{parkId:int}")]
