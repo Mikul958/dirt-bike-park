@@ -95,7 +95,7 @@ namespace DirtBikePark.Services
             // Check that the provided cart exists and contains at least one booking
             Cart? retrievedCart = _cartRepository.GetCart(cartId);
             if (retrievedCart == null || retrievedCart.Bookings.Count == 0)
-                throw new InvalidOperationException("Cart with ID {cartId} does not exist or is empty.");
+                throw new InvalidOperationException("Provided cart does not exist or is empty.");
 
             // Validate credit card number
             if (paymentInfo.CardNumber.IsNullOrEmpty())
