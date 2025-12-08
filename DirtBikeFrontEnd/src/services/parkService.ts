@@ -17,7 +17,7 @@ export default class ParkService {
         const parks = mockData.map((val) => JSON.parse(JSON.stringify(val)));
         return new Promise((res) => {
             setTimeout(() => {
-                res(parks.find((park) => park.id === id))
+                res(parks.find((park: Park) => park.Id.toString() === id))
             }, 500)
         })
     }
