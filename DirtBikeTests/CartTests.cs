@@ -44,7 +44,7 @@ namespace Tests
             var parkRepository = new ParkRepository(new DatabaseContext(options));
             var bookingRepository = new BookingRepository(new DatabaseContext(options));
             var cartRepository = new CartRepository(new DatabaseContext(options));
-            var parkService = new ParkService(parkRepository);
+            var parkService = new ParkService(parkRepository, bookingRepository);
             var bookingService = new BookingService(bookingRepository, parkRepository);
             var cartService = new CartService(cartRepository,bookingRepository,parkRepository);
 
@@ -76,7 +76,7 @@ namespace Tests
             var parkRepository = new ParkRepository(new DatabaseContext(options));
             var bookingRepository = new BookingRepository(new DatabaseContext(options));
             var cartRepository = new CartRepository(new DatabaseContext(options));
-            var parkService = new ParkService(parkRepository);
+            var parkService = new ParkService(parkRepository, bookingRepository);
             var bookingService = new BookingService(bookingRepository, parkRepository);
             var cartService = new CartService(cartRepository, bookingRepository, parkRepository);
 
@@ -111,7 +111,7 @@ namespace Tests
             var parkRepository = new ParkRepository(new DatabaseContext(options));
             var bookingRepository = new BookingRepository(new DatabaseContext(options));
             var cartRepository = new CartRepository(new DatabaseContext(options));
-            var parkService = new ParkService(parkRepository);
+            var parkService = new ParkService(parkRepository, bookingRepository);
             var bookingService = new BookingService(bookingRepository, parkRepository);
             var cartService = new CartService(cartRepository, bookingRepository, parkRepository);
 
@@ -155,7 +155,7 @@ namespace Tests
             var parkRepository = new ParkRepository(new DatabaseContext(options));
             var bookingRepository = new BookingRepository(new DatabaseContext(options));
             var cartRepository = new CartRepository(new DatabaseContext(options));
-            var parkService = new ParkService(parkRepository);
+            var parkService = new ParkService(parkRepository, bookingRepository);
             var bookingService = new BookingService(bookingRepository, parkRepository);
             var cartService = new CartService(cartRepository, bookingRepository, parkRepository);
 
