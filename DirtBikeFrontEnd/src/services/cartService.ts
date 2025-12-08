@@ -7,18 +7,12 @@ export default class CartService
     private readonly BOOKING_URL_BASE: string = "https://localhost:7226/api/booking/"
 
     private readonly CART_KEY: string = "CART_KEY";
-    private cartId: string = "EMPTY";
+    private cartId: string = "";
     private cart: Cart = {
-        id: "EMPTY",
+        id: "",
         taxRate: 0,
         bookings: [],
         totalPrice: 0
-    }
-
-    constructor() {
-        const storedCartId = localStorage.getItem(this.CART_KEY);
-        if (storedCartId)
-            this.cartId = storedCartId;
     }
 
     getCart = (): Cart | null => {
@@ -26,19 +20,20 @@ export default class CartService
     }
 
     loadCart = async (): Promise<Cart> => {
+        const storedCartId = localStorage.getItem(this.CART_KEY);
+        if (storedCartId !== undefined && storedCartId !== "undefined")  // Javascript is a terrible language dude
+            this.cartId = storedCartId;
+        
         console.log("Calling: " + this.CART_URL_BASE + this.cartId);
         const res = await fetch(this.CART_URL_BASE + this.cartId)
-        if (!res.ok) {
-            const text = await res.text();
-            console.log("Failed to fetch cart with id=" + this.cartId + ", " + text)
-            throw new Error("Failed to fetch cart: " + text);
-        }
+        if (!res.ok)
+            throw new Error("Failed to fetch cart: " + await res.text());
 
         this.cart = await res.json() as Cart;
-        console.log(this.cart);
-        if (this.cartId == "EMPTY") {
+        if (this.cartId === "") {
             this.cartId = this.cart.id;
             localStorage.setItem(this.CART_KEY, this.cart.id);
+            console.log(this.cartId + " vs. " + this.cart.id);
         }
         return this.cart;
     }

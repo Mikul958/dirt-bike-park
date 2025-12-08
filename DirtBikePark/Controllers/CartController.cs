@@ -17,7 +17,7 @@ namespace DirtBikePark.Controllers
         }
 
         // GET {protocol}://{urlBase}/api/cart/{cartId}
-        [HttpGet("{cartId}")]
+        [HttpGet("{cartId?}")]
         public async Task<IActionResult> GetCart([FromRoute] string? cartId)
         {
             // Verify that the provided Guid is valid (if it isn't null)

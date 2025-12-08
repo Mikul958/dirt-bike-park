@@ -1,7 +1,7 @@
 import CartService from "../../services/cartService";
 import CartCard from "../cartCard/cartCard";
 import { Booking } from '../../models/booking';
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./cartDetails.css"
 import PaymentDetails from "../PaymentDetails/PaymentDetails";
 
