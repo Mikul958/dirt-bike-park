@@ -48,7 +48,7 @@ namespace Tests
             var bookingService = new BookingService(bookingRepository, parkRepository);
             var cartService = new CartService(cartRepository,bookingRepository,parkRepository);
 
-            Cart resultCart = await cartService.GetCart(guid);
+            CartResponseDTO resultCart = await cartService.GetCart(guid);
 
             //Assert
             Assert.NotNull(resultCart);
@@ -80,7 +80,7 @@ namespace Tests
             var bookingService = new BookingService(bookingRepository, parkRepository);
             var cartService = new CartService(cartRepository, bookingRepository, parkRepository);
 
-            Cart resultCart = await cartService.GetCart(Guid.Empty);
+            CartResponseDTO resultCart = await cartService.GetCart(Guid.Empty);
 
             //Assert
             Assert.NotEqual(Guid.Empty, resultCart.Id);
