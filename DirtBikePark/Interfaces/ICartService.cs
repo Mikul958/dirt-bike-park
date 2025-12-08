@@ -7,5 +7,6 @@ namespace DirtBikePark.Interfaces
         public Task<CartResponseDTO> GetCart(Guid? cartId);
         public Task<bool> AddBookingToCart(Guid cartId, int parkId, int bookingId);
         public Task<bool> RemoveBookingFromCart(Guid cartId, int bookingId);
+        public Task<bool> ProcessPayment(Guid cartId, PaymentInfo paymentInfo);
     }
 }

@@ -12,10 +12,6 @@ namespace DirtBikePark.Data
         {
             _context = context;
         }
-        public void AddCart(Cart cart)
-        {
-            _context.Carts.Add(cart);
-        }
 
         public Cart? GetCart(Guid? cartId)
         {
@@ -24,6 +20,17 @@ namespace DirtBikePark.Data
                     .Where(booking => !booking.IsPaidFor))  // Filter bookings to bookings that have not been paid for / finalized
                 .ThenInclude(booking => booking.Park)
                 .FirstOrDefault(cart => cart.Id == cartId);
+        }
+
+        public void AddCart(Cart cart)
+        {
+            _context.Carts.Add(cart);
+        }
+
+        public void FinalizePayment(Cart cart)
+        {
+            foreach (Booking booking in cart.Bookings)
+                booking.IsPaidFor = true;
         }
 
         public void Save()
