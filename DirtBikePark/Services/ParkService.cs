@@ -61,24 +61,6 @@ namespace DirtBikePark.Services
             return Task.FromResult(new ParkResponseDTO(park));
 		}
 
-        public Task<bool> AddGuestLimitToPark(int parkId, int numberOfGuests)
-        {
-            // Validate number of guests
-            if (numberOfGuests <= 0)
-                throw new ArgumentException("Number of guests must be a positive value.");
-
-            // Retrieve the park from the database, verify it exists
-            Park? park = _parkRepository.GetPark(parkId);
-            if (park == null)
-                throw new InvalidOperationException($"Park with ID {parkId} not found.");
-
-            // Update guest limit
-            park.GuestLimit = numberOfGuests;
-            _parkRepository.UpdatePark(park); // Update the park in the repository
-            _parkRepository.Save(); // Save changes to the database
-            return Task.FromResult(true);
-        }
-
 		public Task<bool> RemovePark(int parkId)
 		{
             // Check if there is a park in the database with the given ID and return failure if not
@@ -91,6 +73,24 @@ namespace DirtBikePark.Services
             _parkRepository.Save();
 			return Task.FromResult(true);
 		}
+
+        public Task<bool> AddGuestLimitToPark(int parkId, int numberOfGuests)
+        {
+            // Validate number of guests
+            if (numberOfGuests < 0)
+                throw new InvalidOperationException("Number of guests must be non-negative.");
+
+            // Retrieve the park from the database, verify it exists
+            Park? park = _parkRepository.GetPark(parkId);
+            if (park == null)
+                throw new InvalidOperationException($"Park with ID {parkId} not found.");
+
+            // Update guest limit and update park in the database
+            park.GuestLimit = numberOfGuests;
+            _parkRepository.UpdatePark(park);
+            _parkRepository.Save();
+            return Task.FromResult(true);
+        }
 
         public Task<bool> RemoveGuestsFromPark(int parkId, DateOnly date, int numberOfGuests)
         {

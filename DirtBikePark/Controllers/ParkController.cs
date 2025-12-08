@@ -68,34 +68,6 @@ namespace DirtBikePark.Controllers
 
         }
 
-        // POST {protocol}://{urlBase}/api/park/{parkId}/guestlimit
-        [HttpPost("{parkId}/guestlimit")]
-        public async Task<IActionResult> AddGuestLimitToPark([FromRoute] int parkId, [FromBody] int guestLimit)
-        {
-            // Validate that the parkId is valid.
-            if (parkId <= 0)
-                return BadRequest("Park id is invalid.");
-            // Validate that the number of guests is valid.
-            if (guestLimit <= 0)
-                return BadRequest("Number of guests must be greater than zero.");
-            try
-            {
-                // Call service
-                bool success = await _parkService.AddGuestLimitToPark(parkId, guestLimit);
-                return Ok(success);
-            }
-            catch (ArgumentException ex)
-            {
-                // Handles invalid arguments
-                return BadRequest(ex.Message);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                // Handles park not found
-                return NotFound(ex.Message);
-            }
-        }
-
         // DELETE {protocol}://{urlBase}/api/park/{parkId}
         [HttpDelete("{parkId:int}")]
         public async Task<IActionResult> RemovePark([PositiveId][FromRoute] int parkId)
@@ -108,6 +80,30 @@ namespace DirtBikePark.Controllers
             catch (InvalidOperationException ex)
             {
                 return NotFound(ex.Message);
+            }
+        }
+
+        // POST {protocol}://{urlBase}/api/park/{parkId}/guestlimit?guestLimit={guestLimit}
+        [HttpPost("{parkId}/guestlimit")]
+        public async Task<IActionResult> AddGuestLimitToPark([FromRoute] int parkId, [FromQuery] int guestLimit)
+        {
+            // Validate that the parkId is valid.
+            if (parkId <= 0)
+                return BadRequest("Park id is invalid.");
+            // Validate that the number of guests is valid.
+            if (guestLimit <= 0)
+                return BadRequest("Number of guests must be greater than zero.");
+
+            try
+            {
+                // Call service
+                bool success = await _parkService.AddGuestLimitToPark(parkId, guestLimit);
+                return Ok(success);
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Handles invalid arguments
+                return BadRequest(ex.Message);
             }
         }
 
