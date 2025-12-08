@@ -26,7 +26,7 @@ namespace DirtBikePark.Controllers
                 return BadRequest("Could not find a cart with the provided cart ID");
 
             // Retrieve cart through service
-            Cart cart = await _cartService.GetCart(processedCartId);
+            CartResponseDTO cart = await _cartService.GetCart(processedCartId);
             return Ok(cart);
         }
 
