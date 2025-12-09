@@ -19,9 +19,12 @@ export default class CartService
 
     loadCart = async (): Promise<Cart> => {
         const storedCartId = localStorage.getItem(this.CART_KEY);
-        if (storedCartId !== undefined && storedCartId !== "undefined")  // Javascript is a terrible language dude
+        if (!(storedCartId === null || storedCartId === "null" || storedCartId === undefined || storedCartId === "undefined"))  // Javascript is a terrible language dude
             this.cartId = storedCartId;
         
+        console.log(storedCartId);
+        console.log(this.cartId);
+        console.log(this.CART_URL_BASE + this.cartId);
         const res = await fetch(this.CART_URL_BASE + this.cartId, {
             method: "GET",
             headers: {

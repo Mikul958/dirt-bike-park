@@ -22,14 +22,11 @@ namespace DirtBikePark.Controllers
         {
             // Verify that the provided Guid is valid (if it isn't null)
             Guid parsedCartId = Guid.Empty;
-            Guid? finalCartId = null;
-            if (cartId != null && Guid.TryParse(cartId, out parsedCartId))
-                finalCartId = parsedCartId;
-            else
-                finalCartId = null;
+            if (cartId != null && !Guid.TryParse(cartId, out parsedCartId))
+                return BadRequest("Could not parse provided cartId.");
 
             // Retrieve cart through service
-            CartResponseDTO cart = await _cartService.GetCart(finalCartId);
+            CartResponseDTO cart = await _cartService.GetCart(parsedCartId);
             return Ok(cart);
         }
 
