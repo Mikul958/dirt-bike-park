@@ -1,17 +1,17 @@
-import { Booking } from "../../models/booking"
+import { BookingResponse } from "../../models/booking"
 import './cartCard.css';
 
 type cartCardProps = {
-	booking: Booking
-	updateFn: (booking: Booking) => void
-	deleteFn: (bookingToDelete: Booking) => void
+	booking: BookingResponse
+	updateFn: (booking: BookingResponse) => void
+	deleteFn: (bookingToDelete: BookingResponse) => void
 }
 
 export default function CartCard(props: cartCardProps) {
 	const { booking, updateFn, deleteFn } = props;
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const newItem: Booking = {
+		const newItem: BookingResponse = {
 			...booking,
 			[e.target.name]: Number.parseInt(e.target.value)
 		}

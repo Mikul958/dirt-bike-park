@@ -1,6 +1,6 @@
 import CartService from "../../services/cartService";
 import CartCard from "../cartCard/cartCard";
-import { Booking } from '../../models/booking';
+import { BookingInput, BookingResponse } from '../../models/booking';
 import { useState } from "react";
 import "./cartDetails.css"
 import PaymentDetails from "../PaymentDetails/PaymentDetails";
@@ -20,8 +20,8 @@ export default function CartDetails(props: CartDetailsProps) {
     if (!cart)
         return <div>Loading...</div>
 	
-    const updateCartItem = (newBooking: Booking) => {
-        const item = cart.bookings.find((item: Booking) => item.park.id === newBooking.park.id);
+    const updateCartItem = (newBooking: BookingResponse) => {
+        const item = cart.bookings.find((item: BookingResponse) => item.park.id === newBooking.park.id);
         cartService.updateCart(item, newBooking);
         setCart(cartService.getCart());
     }
@@ -30,7 +30,7 @@ export default function CartDetails(props: CartDetailsProps) {
         setPaymentOption(e.target.value);
     }
 
-    const deleteCartItem = (booking: Booking) => {
+    const deleteCartItem = (booking: BookingResponse) => {
         cartService.removeItemFromCart(booking.id);
         handleDelete();
         setCart(cartService.getCart());
@@ -61,7 +61,7 @@ export default function CartDetails(props: CartDetailsProps) {
     return(
         <div>
             <div className="cartItems column">
-                {cart.bookings.map(((booking: Booking) => <CartCard booking={booking} updateFn={(e) => updateCartItem(e)} deleteFn={deleteCartItem} />))}      
+                {cart.bookings.map(((booking: BookingResponse) => <CartCard booking={booking} updateFn={(e) => updateCartItem(e)} deleteFn={deleteCartItem} />))}      
             </div>
             <div>
                 Tax: ${getTaxPrice().toFixed(2)}

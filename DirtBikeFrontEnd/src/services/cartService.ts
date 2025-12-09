@@ -1,4 +1,4 @@
-import { Booking } from "../models/booking";
+import { BookingInput, BookingResponse } from "../models/booking";
 import { Cart } from "../models/cart";
 
 export default class CartService
@@ -44,9 +44,9 @@ export default class CartService
         return this.cart;
     }
 
-    addBookingToCart = async (booking: Booking) => {
+    addBookingToCart = async (parkId: number, booking: BookingInput) => {
         // Attempt to create booking and retrieve created booking from response
-        const bookingUrl = new URL(this.BOOKING_URL_BASE + "park/" + booking.parkId)
+        const bookingUrl = new URL(this.BOOKING_URL_BASE + "park/" + parkId)
         const bookingRes = await fetch(bookingUrl, {
             method: "POST",
             headers: {
@@ -56,11 +56,11 @@ export default class CartService
         });
         if (!bookingRes.ok)
             throw new Error("Failed to create booking: " + (await bookingRes.text()))
-        const createdBooking: Booking = (await bookingRes.json()) as Booking;
+        const createdBooking: BookingResponse = (await bookingRes.json()) as BookingResponse;
         
         // Attempt to add created booking to the cart
         const cartUrl = new URL(this.CART_URL_BASE + this.cartId + "/add")
-        cartUrl.searchParams.append("parkId", createdBooking.parkId.toString())
+        cartUrl.searchParams.append("parkId", createdBooking.park.id.toString())
         cartUrl.searchParams.append("bookingId", createdBooking.id.toString())
         const cartRes = await fetch(cartUrl, {
             method: "POST",
@@ -83,18 +83,16 @@ export default class CartService
             throw new Error("Failed to remove booking from cart");
     }
 
-    updateCart(oldBooking: Booking, newBooking: Booking) {
+    updateCart(oldBooking: BookingResponse, newBooking: BookingResponse) {
         const combinedBooking = {
             id: newBooking.id || oldBooking.id,
-            cartId: newBooking.cartId || oldBooking.cartId,
-            parkId: newBooking.parkId || oldBooking.parkId,
             park: newBooking.park || oldBooking.park,
             date: newBooking.date || oldBooking.date,
             numAdults: newBooking.numAdults || oldBooking.numAdults,
             numChildren: newBooking.numChildren || oldBooking.numChildren,
             totalPrice: newBooking.totalPrice || oldBooking.totalPrice
         };
-        const index = this.cart.bookings.findIndex((val: Booking) => val.park.id === combinedBooking.park.id);
+        const index = this.cart.bookings.findIndex((val: BookingResponse) => val.park.id === combinedBooking.park.id);
         if(index > -1) {
             this.cart.bookings[index] = combinedBooking;
         }

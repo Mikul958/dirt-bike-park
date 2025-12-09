@@ -17,7 +17,7 @@ export default function BookRide(props: bookRideProps) {
     const [dateTime, setDateTime] = useState("");
 	
 	const submitForm = () => {
-        cartService.addBookingToCart({ id: 0, cartId: "0", parkId: park.id, park: park, numAdults: numAdults, numChildren: numChildren, date: dateTime, totalPrice: 0 })
+        cartService.addBookingToCart(park.id, { date: dateTime, numAdults: numAdults, numChildren: numChildren })
         onBook();
     }
 

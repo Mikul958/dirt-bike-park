@@ -1,11 +1,16 @@
-import Park from "./park";
+import ParkResponse from "./park";
 
-export interface Booking
+export interface BookingInput
+{
+    date: string;
+    numAdults: number;
+    numChildren: number;
+}
+
+export interface BookingResponse
 {
     id: number;
-    cartId: string;
-    parkId: number;
-    park: Park;
+    park: ParkResponse;
     date: string;
     numAdults: number;
     numChildren: number;
