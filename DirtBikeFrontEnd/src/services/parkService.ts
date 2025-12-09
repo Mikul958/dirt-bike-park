@@ -6,7 +6,8 @@ export default class ParkService
     private readonly PARK_URL_BASE: string = "https://localhost:7226/api/park/"
     private parks: Park[] = [];
 
-    public randNumber = Math.random();
+    public parkSignal: number = 0;
+    public parksLength: number = this.parks.length;
 
     loadParks = async (): Promise<Park[]> => {
         const res = await fetch(this.PARK_URL_BASE, {
@@ -25,6 +26,8 @@ export default class ParkService
         console.log("parkservice add:");
         console.log(this.parks);
 
+        this.parksLength = this.parks.length;
+        this.parkSignal++;
         return this.parks;
     }
     
