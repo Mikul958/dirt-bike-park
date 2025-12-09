@@ -1,55 +1,125 @@
-import { CartItem } from "../models/cartItem";
+import { BookingInput, BookingResponse } from "../models/booking";
+import { Cart } from "../models/cart";
 
-export default class CartService {
-    private items: CartItem[];
+export default class CartService
+{
+    private readonly CART_URL_BASE: string = "https://localhost:7226/api/cart/"
+    private readonly BOOKING_URL_BASE: string = "https://localhost:7226/api/booking/"
 
-    private CART_KEY = 'rideFinderExampleApp'
-
-
-    //loadCart will be our public facing method, all invocations of getCart should be internal so we only have one source of truth
-
-    loadCart = (): CartItem[] => {
-        return JSON.parse(localStorage.getItem(this.CART_KEY));
+    private readonly CART_KEY: string = "CART_KEY";
+    private cartId: string = "";
+    private cart: Cart = {
+        id: "",
+        taxRate: 0,
+        bookings: [],
+        totalPrice: 0
     }
 
-    addItemToCart = (newItem: CartItem) => {
-        const cart = this.loadCart() || [];
-        const itemInCart = cart.findIndex((item: CartItem) => item.park.id === newItem.park.id);
-        if(itemInCart > -1) {
-            this.updateCart(cart[itemInCart], newItem);
-        }
-        cart.push(newItem);
-        this.save(cart);
-    }
+    public signal: number = 0;
 
-    removeItemFromCart = (remItem: CartItem) => {
-        const cart = this.loadCart();
+    loadCart = async (): Promise<Cart> => {
+        const storedCartId = localStorage.getItem(this.CART_KEY);
+        if (!(storedCartId === null || storedCartId === "null" || storedCartId === undefined || storedCartId === "undefined"))  // Javascript is a terrible language dude
+            this.cartId = storedCartId;
         
-        const result = cart.filter((val: CartItem) => val.park.id !== remItem.park.id)
-        this.save(result);
-    }
+        console.log(storedCartId);
+        console.log(this.cartId);
+        console.log(this.CART_URL_BASE + this.cartId);
+        const res = await fetch(this.CART_URL_BASE + this.cartId, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        if (!res.ok)
+            throw new Error("Failed to fetch cart: " + await res.text());
 
-    updateCart(oldItem: CartItem, newItem: CartItem) {
-        const cart = this.loadCart();
-        if(oldItem.park.id !== newItem.park.id) {
-            this.save(cart);
+        this.cart = await res.json() as Cart;
+        if (this.cartId === "") {
+            this.cartId = this.cart.id;
+            localStorage.setItem(this.CART_KEY, this.cart.id);
         }
 
-        //Update with new item first and then old item if it doesn't exist
-        const combinedItem = {
-            park: newItem.park || oldItem.park,
-            numDays: newItem.numDays || oldItem.numDays,
-            numAdults: newItem.numAdults || oldItem.numAdults,
-            numKids: newItem.numKids || oldItem.numKids
+        console.log(this.cart);
+
+        this.signal++;
+        return this.cart;
+    }
+
+    getCart = (): Cart | null => {
+        return this.cart;
+    }
+
+    addBookingToCart = async (parkId: number, booking: BookingInput) => {
+        // Attempt to create booking and retrieve created booking from response
+        const bookingUrl = new URL(this.BOOKING_URL_BASE + "park/" + parkId)
+        const bookingRes = await fetch(bookingUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(booking)
+        });
+        if (!bookingRes.ok)
+            throw new Error("Failed to create booking: " + (await bookingRes.text()))
+        const createdBooking: BookingResponse = (await bookingRes.json()) as BookingResponse;
+        
+        // Attempt to add created booking to the cart
+        const cartUrl = new URL(this.CART_URL_BASE + this.cartId + "/add")
+        cartUrl.searchParams.append("parkId", createdBooking.park.id.toString())
+        cartUrl.searchParams.append("bookingId", createdBooking.id.toString())
+        const cartRes = await fetch(cartUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        if (!cartRes.ok)
+            throw new Error("Failed to add booking to cart: " + await cartRes.text());
+        this.signal++;
+    }
+
+    removeItemFromCart = async (bookingId: number) => {
+        const url = new URL(this.CART_URL_BASE + this.cartId + "/remove")
+        url.searchParams.append("bookingId", bookingId.toString())
+        
+        const res = await fetch(url, {
+            method: "PUT"
+        });
+        if (!res.ok)
+            throw new Error("Failed to remove booking from cart: " + await res.text());
+        this.signal++;
+    }
+
+    updateCart(oldBooking: BookingResponse, newBooking: BookingResponse) {
+        const combinedBooking = {
+            id: newBooking.id || oldBooking.id,
+            park: newBooking.park || oldBooking.park,
+            date: newBooking.date || oldBooking.date,
+            numAdults: newBooking.numAdults || oldBooking.numAdults,
+            numChildren: newBooking.numChildren || oldBooking.numChildren,
+            totalPrice: newBooking.totalPrice || oldBooking.totalPrice
         };
-        const index = cart.findIndex((val: CartItem) => val.park.id === combinedItem.park.id);
+        const index = this.cart.bookings.findIndex((val: BookingResponse) => val.park.id === combinedBooking.park.id);
         if(index > -1) {
-            cart[index] = combinedItem;
+            this.cart.bookings[index] = combinedBooking;
         }
-        this.save(cart);
+        this.signal++;
     }
 
-    private save(cart: CartItem[]) {
-        localStorage.setItem(this.CART_KEY, JSON.stringify(cart));
+    submitPayment = async (cardNumber: string, ccv: string, expDate: string, name: string) => {
+        const url = new URL(this.CART_URL_BASE + this.cartId + "/payment");
+        url.searchParams.append("cardNumber", cardNumber);
+        url.searchParams.append("exp", expDate);
+        url.searchParams.append("cardHolderName", name);
+        url.searchParams.append("ccv", ccv);
+
+        console.log("Fetching with: " + url);
+        const res = await fetch(url, {
+            method: "POST"
+        });
+        if (!res.ok)
+            throw new Error("Failed to process payment: " + await res.text())
+        this.signal++;
     }
 }

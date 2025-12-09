@@ -17,13 +17,25 @@ builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 // Add Swagger services ({protocol}://{urlBase}/swagger).
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.EnableAnnotations();
+});
 
 // Add Entity Framework Core in-memory database.
 builder.Services.AddDbContext<DatabaseContext>(options =>
 {
     //options.UseInMemoryDatabase("DirtBikeDB");
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowDev", policy =>
+    {
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+    });
 });
 
 // Build the app.
@@ -36,6 +48,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors("AllowDev");
 }
 
 // Configure controllers and run.

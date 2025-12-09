@@ -1,11 +1,22 @@
+import CartService from "../../services/cartService";
 import { useState } from "react";
 
-export default function PaymentDetails() {
+type PaymentDetailsProps = {
+    cartService: CartService;
+}
+
+export default function PaymentDetails(props: PaymentDetailsProps) {
+    const { cartService } = props;
 
     const [cardNumber, setCardNumber] = useState("");
+    const [ccv, setCcv] = useState("");
     const [expDate, setExpDate] = useState("");
     const [name, setName] = useState("");
 
+    const handleCcvChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCcv(e.target.value);
+    }
+    
     const handleExpDate = (e: React.ChangeEvent<HTMLInputElement>) => {
         setExpDate(e.target.value)
     }
@@ -15,8 +26,9 @@ export default function PaymentDetails() {
     }
 
     const sendCardDetails = () => {
-        console.log("Sent!");
+        cartService.submitPayment(cardNumber, ccv, expDate, name)
         setCardNumber("");
+        setCcv("");
         setExpDate("");
         setName("");
     }
@@ -26,6 +38,10 @@ export default function PaymentDetails() {
             <div>
                 <label>Card Number</label>
                 <input type="text" onChange={e => setCardNumber(e.target.value.replace(/\D/, ''))} value={cardNumber} />
+            </div>
+            <div>
+                <label>CCV</label>
+                <input type="text" onChange={handleCcvChange} value={ccv} />
             </div>
             <div>
                 <label>Expiration Date</label>

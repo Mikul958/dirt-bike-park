@@ -1,7 +1,7 @@
 import CartService from "../../services/cartService";
 import CartCard from "../cartCard/cartCard";
-import { CartItem } from '../../models/cartItem';
-import { useState } from "react";
+import { BookingInput, BookingResponse } from '../../models/booking';
+import { useEffect, useState } from "react";
 import "./cartDetails.css"
 import PaymentDetails from "../PaymentDetails/PaymentDetails";
 
@@ -14,43 +14,50 @@ export default function CartDetails(props: CartDetailsProps) {
 	const { cartService, handleDelete } = props;
 
     //Pulling from local storage as source of truth
-    const [cart, setCart] = useState(cartService.loadCart());
+    const [cart, setCart] = useState(cartService.getCart());
     const [paymentOption, setPaymentOption] = useState("PAY_AT_PARK");
+
+    useEffect(() => {
+        setCart(cartService.getCart());
+    }, [cartService.signal]);
+
+    if (!cart)
+        return <div>Loading...</div>
 	
-    const updateCartItem = (newCartItem: CartItem) => {
-        const item = cart.find((item: CartItem) => item.park.id === newCartItem.park.id);
-        cartService.updateCart(item, newCartItem);
-        setCart(cartService.loadCart());
+    const updateCartItem = (newBooking: BookingResponse) => {
+        const item = cart.bookings.find((item: BookingResponse) => item.park.id === newBooking.park.id);
+        cartService.updateCart(item, newBooking);
+        setCart(cartService.getCart());
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPaymentOption(e.target.value);
     }
 
-    const deleteCartItem = (item: CartItem) => {
-        cartService.removeItemFromCart(item);
+    const deleteCartItem = (booking: BookingResponse) => {
+        cartService.removeItemFromCart(booking.id);
         handleDelete();
-        setCart(cartService.loadCart());
+        setCart(cartService.getCart());
     }
 
     const getTaxPrice = () => {
-        return cart.reduce((acc, curr) => {
-            const {numAdults, numDays, numKids, park} = curr;
+        return cart.bookings.reduce((acc, curr) => {
+            const {numAdults: NumAdults, numChildren: NumChildren, park: Park} = curr;
             return (
                 acc + 
-                    ((numAdults * numDays * park.adultPrice) + 
-                    (numKids * numDays * park.childPrice)) * 0.08 
+                    ((NumAdults * 1 * Park.pricePerAdult) + 
+                    (NumChildren * 1 * Park.pricePerChild)) * 0.08
         )
         }, 0)
     }
 
     const getTotalPrice = () => {
-        return cart.reduce((acc, curr) => {
-            const {numAdults, numDays, numKids, park} = curr;
+        return cart.bookings.reduce((acc, curr) => {
+            const {numAdults: NumAdults, numChildren: NumChildren, park: Park} = curr;
             return (
                 acc + 
-                    ((numAdults * numDays * park.adultPrice) + 
-                    (numKids * numDays * park.childPrice)) * 1.08 
+                    ((NumAdults * 1 * Park.pricePerAdult) + 
+                    (NumChildren * 1 * Park.pricePerChild)) * 1.08 
         )
         }, 0)
     }
@@ -58,7 +65,7 @@ export default function CartDetails(props: CartDetailsProps) {
     return(
         <div>
             <div className="cartItems column">
-                {cart.map(((item: CartItem) => <CartCard cartItem={item} updateFn={(e) => updateCartItem(e)} deleteFn={deleteCartItem} />))}      
+                {cart.bookings.map(((booking: BookingResponse) => <CartCard booking={booking} updateFn={(e) => updateCartItem(e)} deleteFn={deleteCartItem} />))}      
             </div>
             <div>
                 Tax: ${getTaxPrice().toFixed(2)}
@@ -72,7 +79,7 @@ export default function CartDetails(props: CartDetailsProps) {
                 <input type="radio" name="selectedPayment" value={"PAY_NOW"} checked={paymentOption === "PAY_NOW"} onChange={handleChange} /> Pay Now
             </label>
             {
-                paymentOption === "PAY_NOW" && <PaymentDetails />
+                paymentOption === "PAY_NOW" && <PaymentDetails cartService={cartService} />
             }
         </div>
     )

@@ -1,7 +1,9 @@
-import { CartItem } from "./cartItem";
+import { BookingResponse } from "./booking";
 
-export interface Cart {
-    cartItems: CartItem[];
+export interface Cart
+{
+    id: string;
     taxRate: number;
-    total: number;
+    bookings: BookingResponse[];
+    totalPrice: number;
 }

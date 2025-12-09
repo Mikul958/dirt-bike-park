@@ -5,11 +5,11 @@ import Search from "../../components/Search/search";
 import CartService from "../../services/cartService";
 import ParkService from "../../services/parkService";
 import './home.css';
-import IPark from "../../models/park";
+import Park from "../../models/park";
 import Review from "../../models/review";
 
 interface HomeProps {
-    parkService: ParkService
+    parkService: ParkService;
     cartService: CartService;
 }
 
@@ -21,15 +21,14 @@ type searchParams = {
 export default function Home(props: HomeProps) {
     const { parkService } = props;
 
-    const [parks, setParks] = useState([] as IPark[])
+    const [parks, setParks] = useState(parkService.getAllParks())
     //For the purposes of this, empty string location and rating 0 will be considered default
     const [searchParams, setSearchParams] = useState({location: "", rating: 0} as searchParams)
 
     useEffect(() => {
-        parkService.getAllParks().then((res) => {
-            setParks(res);
-        })
-    }, [parkService])
+        const retrievedParks = parkService.getAllParks()
+        setParks(retrievedParks)
+    }, [parkService, parkService.signal]);
 
     //This should be done with actual geolocation but none of these parks are real
     //So to simulate, it's just going to be a random chance

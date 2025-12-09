@@ -2,6 +2,7 @@
 using DirtBikePark.Interfaces;
 using DirtBikePark.Models;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace DirtBikePark.Controllers
 {
@@ -18,6 +19,7 @@ namespace DirtBikePark.Controllers
 
         // GET /api/booking
         [HttpGet]
+        [SwaggerOperation(Summary = "Get All Bookings")]
         public async Task<IActionResult> GetBookings()
         {
             IEnumerable<BookingResponseDTO> items = await _bookingService.GetBookings();
@@ -26,6 +28,7 @@ namespace DirtBikePark.Controllers
 
         // GET /api/booking/park/{parkId}
         [HttpGet("park/{parkId:int}")]
+        [SwaggerOperation(Summary = "Get Bookings By Park")]
         public async Task<IActionResult> GetParkBookings([PositiveId][FromRoute] int parkId)
         {
             IEnumerable<BookingResponseDTO> items = await _bookingService.GetParkBookings(parkId);
@@ -34,6 +37,7 @@ namespace DirtBikePark.Controllers
 
         // GET /api/booking/{bookingId}
         [HttpGet("{bookingId:int}")]
+        [SwaggerOperation(Summary = "Get Booking")]
         public async Task<IActionResult> GetBooking([PositiveId][FromRoute] int bookingId)
         {
             BookingResponseDTO? booking = await _bookingService.GetBooking(bookingId);
@@ -45,6 +49,7 @@ namespace DirtBikePark.Controllers
 
         // POST /api/booking/park/{parkId}
         [HttpPost("park/{parkId:int}")]
+        [SwaggerOperation(Summary = "Create Booking")]
         public async Task<IActionResult> CreateBooking([PositiveId][FromRoute] int parkId, [FromBody] BookingInputDTO bookingInfo)
         {
             try
@@ -62,6 +67,7 @@ namespace DirtBikePark.Controllers
 
         // DELETE /api/booking/{bookingId}
         [HttpDelete("{bookingId:int}")]
+        [SwaggerOperation(Summary = "Remove Booking")]
         public async Task<IActionResult> RemoveBooking([PositiveId][FromRoute] int bookingId)
         {
             try

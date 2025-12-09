@@ -3,6 +3,7 @@ using DirtBikePark.Interfaces;
 using DirtBikePark.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace DirtBikePark.Controllers
 {
@@ -17,21 +18,23 @@ namespace DirtBikePark.Controllers
         }
 
         // GET {protocol}://{urlBase}/api/cart/{cartId}
-        [HttpGet("{cartId}")]
+        [HttpGet("{cartId?}")]
+        [SwaggerOperation(Summary = "Get Cart")]
         public async Task<IActionResult> GetCart([FromRoute] string? cartId)
         {
             // Verify that the provided Guid is valid (if it isn't null)
-            Guid processedCartId = Guid.Empty;
-            if (cartId != null && !Guid.TryParse(cartId, out processedCartId))
-                return BadRequest("Could not find a cart with the provided cart ID");
+            Guid parsedCartId = Guid.Empty;
+            if (cartId != null && !Guid.TryParse(cartId, out parsedCartId))
+                return BadRequest("Could not parse provided cartId.");
 
             // Retrieve cart through service
-            CartResponseDTO cart = await _cartService.GetCart(processedCartId);
+            CartResponseDTO cart = await _cartService.GetCart(parsedCartId);
             return Ok(cart);
         }
 
         // POST {protocol}://{urlBase}/api/cart/{cartId}/add?parkId={parkId} -- bookingInfo sent in request body
         [HttpPost("{cartId}/add")]
+        [SwaggerOperation(Summary = "Add Booking To Cart")]
         public async Task<IActionResult> AddBookingToCart([FromRoute] string cartId, [PositiveId][FromQuery] int parkId, [PositiveId][FromQuery] int bookingId)
         {
             // Verify that the provided cartId is a valid Guid
@@ -54,6 +57,7 @@ namespace DirtBikePark.Controllers
 
         // PUT {protocol}://{urlBase}/api/cart/{cardId}/remove?bookingId={bookingId}
         [HttpPut("{cartId}/remove")]
+        [SwaggerOperation(Summary = "Remove Booking From Cart")]
         public async Task<IActionResult> RemoveBookingFromCart([FromRoute] string cartId, [PositiveId][FromQuery] int bookingId)
         {
             // Verify that the provided cartId is a valid Guid
@@ -76,6 +80,7 @@ namespace DirtBikePark.Controllers
 
         // POST {protocol}://{urlBase}/api/cart/{cartId}/payment?cardNumber={cardNumber}&exp={exp}&cardHolderName={cardHolderName}&ccv={ccv}
         [HttpPost("{cartId}/payment")]
+        [SwaggerOperation(Summary = "Process Payment")]
         public async Task<IActionResult> ProcessPayment([FromRoute] string cartId, [FromQuery] string cardNumber, [FromQuery] DateOnly exp, [FromQuery] string cardHolderName, [FromQuery] string ccv)
         {
             // Verify that the provided cartId is a valid Guid
