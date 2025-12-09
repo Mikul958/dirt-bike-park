@@ -82,8 +82,8 @@ namespace DirtBikePark.Services
                 throw new ArgumentException("The price per adult must be a positive value.");
             if (newPark.PricePerChild < 0)
                 throw new ArgumentException("The price per adult must be a positive value.");
-            if (newPark.GuestLimit <= 0)
-                throw new ArgumentException("The guest limit must be at least 1.");
+            if (newPark.GuestLimit < 0)
+                throw new ArgumentException("The guest limit must be at least 0.");
 
             // Check if there is a park in the database with the given ID and return failure if not
             Park? park = _parkRepository.GetPark(parkId);
