@@ -21,14 +21,17 @@ export function ParkCard({park}: {park: Park }) {
     }
 
     const getAverageRating = () => {
+        const activeReviews = park.reviews.filter((review) => review.active ?? false);
+        if (activeReviews.length === 0 )
+            return 0;
         const sum = park.reviews.reduce((acc, curr) => acc + curr.rating, 0)
-        return (sum / (park.reviews.filter((review) => review.active || true).length || 0));
+        return (sum / activeReviews.length);
     }
 
     return(
         <div className="parkCard card-container">
             <a href={`/details/${park.id}`}> 
-                <img src={park.imageUrl} alt={park.name} className="parkCard image-park"/>
+                <img src={park.imageUrl ?? undefined} alt={park.name} className="parkCard image-park"/>
             </a>
             <div className="parkCard card-text">
                 <h2> {park.name} </h2>

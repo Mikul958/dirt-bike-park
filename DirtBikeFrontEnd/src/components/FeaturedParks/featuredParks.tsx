@@ -17,7 +17,7 @@ export default function FeaturedParks(props: FeaturedParksProps) {
             <h2>Featured Parks</h2>
             <div className="featured-park-grid">
                 {allParks.map((park: Park) => {
-                    return <ParkCard key={`ParkID:${park.id}`} park={park} />
+                    return <ParkCard key={park.id} park={park} />
                 })}
             </div>
         </>

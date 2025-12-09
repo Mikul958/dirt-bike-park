@@ -24,14 +24,11 @@ export default class ParkService
         }
         console.log("parkservice add:");
         console.log(this.parks);
-        console.log("Random float: " + this.randNumber);
 
         return this.parks;
     }
     
     getAllParks = (): Park[] => {
-        console.log("GetAllParks");
-        console.log(this.parks);
         return this.parks;
     };
 

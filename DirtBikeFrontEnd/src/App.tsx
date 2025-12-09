@@ -25,6 +25,8 @@ function App()
       parkService.loadParks()
       .then(loadedParks => {
         setParks(loadedParks);
+        console.log("App: ")
+        console.log(parks);
       })
       cartService.loadCart()
       .then(loadedCart => {
