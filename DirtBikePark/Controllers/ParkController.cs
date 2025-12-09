@@ -75,7 +75,7 @@ namespace DirtBikePark.Controllers
         // PUT {protocol}://{urlBase}/api/park/{parkId}
         [HttpPut("{parkId:int}")]
         [SwaggerOperation(Summary = "Edit Park")]
-        public async Task<IActionResult> EditPark([FromRoute] int parkId, [FromBody] ParkInputDTO newPark)
+        public async Task<IActionResult> EditPark([PositiveId][FromRoute] int parkId, [FromBody] ParkInputDTO newPark)
         {
             // Validate request body
             if (newPark == null)
@@ -111,11 +111,11 @@ namespace DirtBikePark.Controllers
         // POST {protocol}://{urlBase}/api/park/{parkId}/guestlimit?guestLimit={guestLimit}
         [HttpPost("{parkId}/guestlimit")]
         [SwaggerOperation(Summary = "Add Guest Limit To Park")]
-        public async Task<IActionResult> AddGuestLimitToPark([FromRoute] int parkId, [FromQuery] int guestLimit)
+        public async Task<IActionResult> AddGuestLimitToPark([PositiveId][FromRoute] int parkId, [PositiveId][FromQuery] int guestLimit)
         {
             // Validate that the parkId is valid.
-            if (parkId <= 0)
-                return BadRequest("Park id is invalid.");
+            //if (parkId <= 0)
+            //    return BadRequest("Park id is invalid.");
             // Validate that the number of guests is valid.
             if (guestLimit <= 0)
                 return BadRequest("Number of guests must be greater than zero.");
@@ -136,7 +136,7 @@ namespace DirtBikePark.Controllers
         // DELETE {protocol}://{urlBase}/api/park/{parkId}/removeGuests?date={date}&numberOfGuests={numberOfGuests}
         [HttpDelete("{parkId:int}/removeGuests")]
         [SwaggerOperation(Summary = "Remove Guests From Park")]
-        public async Task<IActionResult> RemoveGuestsFromPark([PositiveId][FromRoute] int parkId, [FromQuery] DateOnly date, [FromQuery] int numberofGuests)
+        public async Task<IActionResult> RemoveGuestsFromPark([PositiveId][FromRoute] int parkId, [FromQuery] DateOnly date, [PositiveId][FromQuery] int numberofGuests)
         {
             if (numberofGuests < 1)
                 return BadRequest("Number of guests to remove cannot be less than 1.");
