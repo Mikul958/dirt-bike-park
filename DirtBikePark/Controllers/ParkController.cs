@@ -74,7 +74,8 @@ namespace DirtBikePark.Controllers
         {
             // Validate request body
             if (newPark == null)
-                return BadRequest("Request Body can not be null.");
+                return BadRequest("Request Body cannot be null.");
+
             try
             {
                 bool success = await _parkService.EditPark(parkId, newPark);
@@ -82,7 +83,7 @@ namespace DirtBikePark.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
 
