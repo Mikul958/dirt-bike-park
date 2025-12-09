@@ -1,7 +1,7 @@
 import CartService from "../../services/cartService";
 import CartCard from "../cartCard/cartCard";
 import { BookingInput, BookingResponse } from '../../models/booking';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./cartDetails.css"
 import PaymentDetails from "../PaymentDetails/PaymentDetails";
 
@@ -16,6 +16,10 @@ export default function CartDetails(props: CartDetailsProps) {
     //Pulling from local storage as source of truth
     const [cart, setCart] = useState(cartService.getCart());
     const [paymentOption, setPaymentOption] = useState("PAY_AT_PARK");
+
+    useEffect(() => {
+        setCart(cartService.getCart());
+    }, [cartService.signal]);
 
     if (!cart)
         return <div>Loading...</div>

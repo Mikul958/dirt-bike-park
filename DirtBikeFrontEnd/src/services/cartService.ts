@@ -15,7 +15,7 @@ export default class CartService
         totalPrice: 0
     }
 
-    public randomNumber = Math.random();
+    public signal: number = 0;
 
     loadCart = async (): Promise<Cart> => {
         const storedCartId = localStorage.getItem(this.CART_KEY);
@@ -37,6 +37,9 @@ export default class CartService
             localStorage.setItem(this.CART_KEY, this.cart.id);
         }
 
+        console.log(this.cart);
+
+        this.signal++;
         return this.cart;
     }
 
@@ -70,6 +73,7 @@ export default class CartService
         });
         if (!cartRes.ok)
             throw new Error("Failed to add booking to cart: " + (await cartRes.text()));
+        this.signal++;
     }
 
     removeItemFromCart = async (bookingId: number) => {
@@ -81,6 +85,7 @@ export default class CartService
         });
         if (!res.ok)
             throw new Error("Failed to remove booking from cart");
+        this.signal++;
     }
 
     updateCart(oldBooking: BookingResponse, newBooking: BookingResponse) {
@@ -96,9 +101,6 @@ export default class CartService
         if(index > -1) {
             this.cart.bookings[index] = combinedBooking;
         }
-    }
-
-    setCart(cart: Cart) {
-        this.cart = cart;
+        this.signal++;
     }
 }
