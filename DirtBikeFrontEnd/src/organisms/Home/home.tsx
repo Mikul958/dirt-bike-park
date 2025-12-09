@@ -9,7 +9,7 @@ import Park from "../../models/park";
 import Review from "../../models/review";
 
 interface HomeProps {
-    parkService: ParkService
+    parkService: ParkService;
     cartService: CartService;
 }
 
@@ -21,14 +21,15 @@ type searchParams = {
 export default function Home(props: HomeProps) {
     const { parkService } = props;
 
-    const [parks, setParks] = useState([] as Park[])
+    const [parks, setParks] = useState(parkService.getAllParks())
     //For the purposes of this, empty string location and rating 0 will be considered default
     const [searchParams, setSearchParams] = useState({location: "", rating: 0} as searchParams)
 
     useEffect(() => {
-        parkService.getAllParks().then((res) => {
-            setParks(res);
-        })
+        parkService.loadParks()
+        .then((loadedParks) => {
+            setParks(loadedParks);
+        });
     }, [parkService])
 
     //This should be done with actual geolocation but none of these parks are real

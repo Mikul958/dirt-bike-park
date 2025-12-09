@@ -15,17 +15,19 @@ export default class CartService
         totalPrice: 0
     }
 
-    getCart = (): Cart | null => {
-        return this.cart;
-    }
+    public randomNumber = Math.random();
 
     loadCart = async (): Promise<Cart> => {
         const storedCartId = localStorage.getItem(this.CART_KEY);
         if (storedCartId !== undefined && storedCartId !== "undefined")  // Javascript is a terrible language dude
             this.cartId = storedCartId;
         
-        console.log("Calling: " + this.CART_URL_BASE + this.cartId);
-        const res = await fetch(this.CART_URL_BASE + this.cartId)
+        const res = await fetch(this.CART_URL_BASE + this.cartId, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
         if (!res.ok)
             throw new Error("Failed to fetch cart: " + await res.text());
 
@@ -33,8 +35,12 @@ export default class CartService
         if (this.cartId === "") {
             this.cartId = this.cart.id;
             localStorage.setItem(this.CART_KEY, this.cart.id);
-            console.log(this.cartId + " vs. " + this.cart.id);
         }
+
+        return this.cart;
+    }
+
+    getCart = (): Cart | null => {
         return this.cart;
     }
 
@@ -50,7 +56,7 @@ export default class CartService
         });
         if (!bookingRes.ok)
             throw new Error("Failed to create booking: " + (await bookingRes.text()))
-        const createdBooking: Booking = (await bookingRes.json()) as unknown as Booking;
+        const createdBooking: Booking = (await bookingRes.json()) as Booking;
         
         // Attempt to add created booking to the cart
         const cartUrl = new URL(this.CART_URL_BASE + this.cartId + "/add")
@@ -70,7 +76,9 @@ export default class CartService
         const url = new URL(this.CART_URL_BASE + this.cartId + "/remove")
         url.searchParams.append("bookingId", bookingId.toString())
         
-        const res = await fetch(url);
+        const res = await fetch(url, {
+            method: "PUT"
+        });
         if (!res.ok)
             throw new Error("Failed to remove booking from cart");
     }
@@ -90,5 +98,9 @@ export default class CartService
         if(index > -1) {
             this.cart.bookings[index] = combinedBooking;
         }
+    }
+
+    setCart(cart: Cart) {
+        this.cart = cart;
     }
 }

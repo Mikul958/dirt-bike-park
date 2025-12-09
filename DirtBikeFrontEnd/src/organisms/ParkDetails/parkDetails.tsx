@@ -18,9 +18,8 @@ export default function ParkDetails(props: ParkDetailsProps) {
     const [selectedPark, setSelectedPark] = useState({} as IPark)
 
     useEffect(() => {
-        parkService.getParkById(parkId).then((res) => {
-            setSelectedPark(res);
-        })
+        const res = parkService.getParkById(parkId)
+        setSelectedPark(res);
     }, [parkId, parkService])
     
 

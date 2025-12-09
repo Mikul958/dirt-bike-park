@@ -9,6 +9,9 @@ interface FeaturedParksProps {
 export default function FeaturedParks(props: FeaturedParksProps) {
     const { allParks } = props;
 
+    console.log("FeaturedParks");
+    console.log(allParks);
+
     return(
         <>
             <h2>Featured Parks</h2>
