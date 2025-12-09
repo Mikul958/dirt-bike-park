@@ -3,6 +3,7 @@ using DirtBikePark.Interfaces;
 using DirtBikePark.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 
 namespace DirtBikePark.Controllers
@@ -20,6 +21,7 @@ namespace DirtBikePark.Controllers
 
         // GET {protocol}://{urlBase}/api/park/{parkId}
         [HttpGet("{parkId:int}")]
+        [SwaggerOperation(Summary = "Get Park By ID")]
         public async Task<IActionResult> GetPark([PositiveId][FromRoute] int parkId)
         {
             try
@@ -35,6 +37,7 @@ namespace DirtBikePark.Controllers
 
         // GET {protocol}://{urlBase}/api/park/
         [HttpGet]
+        [SwaggerOperation(Summary = "Get All Parks")]
         public async Task<IActionResult> GetParks()
         {
             try
@@ -50,6 +53,7 @@ namespace DirtBikePark.Controllers
 
         // POST {protocol}://{urlBase}/api/park/
         [HttpPost]
+        [SwaggerOperation(Summary = "Add Park")]
         public async Task<IActionResult> AddPark([FromBody] ParkInputDTO park)
         {
             if (park == null)
@@ -70,6 +74,7 @@ namespace DirtBikePark.Controllers
 
         // PUT {protocol}://{urlBase}/api/park/{parkId}
         [HttpPut("{parkId:int}")]
+        [SwaggerOperation(Summary = "Edit Park")]
         public async Task<IActionResult> EditPark([FromRoute] int parkId, [FromBody] ParkInputDTO newPark)
         {
             // Validate request body
@@ -89,6 +94,7 @@ namespace DirtBikePark.Controllers
 
         // DELETE {protocol}://{urlBase}/api/park/{parkId}
         [HttpDelete("{parkId:int}")]
+        [SwaggerOperation(Summary = "Remove Park")]
         public async Task<IActionResult> RemovePark([PositiveId][FromRoute] int parkId)
         {
             try
@@ -104,6 +110,7 @@ namespace DirtBikePark.Controllers
 
         // POST {protocol}://{urlBase}/api/park/{parkId}/guestlimit?guestLimit={guestLimit}
         [HttpPost("{parkId}/guestlimit")]
+        [SwaggerOperation(Summary = "Add Guest Limit To Park")]
         public async Task<IActionResult> AddGuestLimitToPark([FromRoute] int parkId, [FromQuery] int guestLimit)
         {
             // Validate that the parkId is valid.
@@ -128,6 +135,7 @@ namespace DirtBikePark.Controllers
 
         // DELETE {protocol}://{urlBase}/api/park/{parkId}/removeGuests?date={date}&numberOfGuests={numberOfGuests}
         [HttpDelete("{parkId:int}/removeGuests")]
+        [SwaggerOperation(Summary = "Remove Guests From Park")]
         public async Task<IActionResult> RemoveGuestsFromPark([PositiveId][FromRoute] int parkId, [FromQuery] DateOnly date, [FromQuery] int numberofGuests)
         {
             if (numberofGuests < 1)

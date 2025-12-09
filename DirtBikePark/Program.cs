@@ -17,7 +17,10 @@ builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 // Add Swagger services ({protocol}://{urlBase}/swagger).
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.EnableAnnotations();
+});
 
 // Add Entity Framework Core in-memory database.
 builder.Services.AddDbContext<DatabaseContext>(options =>
