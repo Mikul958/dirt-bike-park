@@ -1,6 +1,7 @@
 using DirtBikePark.Data;
 using DirtBikePark.Interfaces;
 using DirtBikePark.Models;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -73,6 +74,31 @@ namespace DirtBikePark.Services
             _parkRepository.Save();
 			return Task.FromResult(true);
 		}
+
+        public Task<bool> EditPark(int parkId, ParkInputDTO newPark)
+        {
+            // Validate prices and guestLimit
+            if (newPark.PricePerAdult < 0)
+                throw new ArgumentException("The price per adult must be a positive value.");
+            if (newPark.PricePerChild < 0)
+                throw new ArgumentException("The price per adult must be a positive value.");
+            if (newPark.GuestLimit < 0)
+                throw new ArgumentException("The guest limit must be at least 0.");
+
+            // Check if there is a park in the database with the given ID and return failure if not
+            Park? park = _parkRepository.GetPark(parkId);
+            if (park == null)
+                throw new InvalidOperationException($"Park with ID {parkId} not found.");
+
+            // Assign values then update and save
+            park.PricePerAdult = newPark.PricePerAdult;
+            park.PricePerChild = newPark.PricePerChild;
+            park.GuestLimit = newPark.GuestLimit;
+            _parkRepository.UpdatePark(park);
+            _parkRepository.Save();
+
+            return Task.FromResult(true);
+        }
 
         public Task<bool> AddGuestLimitToPark(int parkId, int numberOfGuests)
         {
