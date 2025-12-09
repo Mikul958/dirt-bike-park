@@ -68,6 +68,25 @@ namespace DirtBikePark.Controllers
 
         }
 
+        // PUT {protocol}://{urlBase}/api/park/{parkId}
+        [HttpPut("{parkId:int}")]
+        public async Task<IActionResult> EditPark([FromRoute] int parkId, [FromBody] ParkInputDTO newPark)
+        {
+            // Validate request body
+            if (newPark == null)
+                return BadRequest("Request Body cannot be null.");
+
+            try
+            {
+                bool success = await _parkService.EditPark(parkId, newPark);
+                return Ok(success);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         // DELETE {protocol}://{urlBase}/api/park/{parkId}
         [HttpDelete("{parkId:int}")]
         public async Task<IActionResult> RemovePark([PositiveId][FromRoute] int parkId)
