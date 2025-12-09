@@ -6,7 +6,7 @@ export default class ParkService
     private readonly PARK_URL_BASE: string = "https://localhost:7226/api/park/"
     private parks: Park[] = [];
 
-    public parkSignal: number = 0;
+    public signal: number = 0;
     public parksLength: number = this.parks.length;
 
     loadParks = async (): Promise<Park[]> => {
@@ -27,7 +27,7 @@ export default class ParkService
         console.log(this.parks);
 
         this.parksLength = this.parks.length;
-        this.parkSignal++;
+        this.signal++;
         return this.parks;
     }
     

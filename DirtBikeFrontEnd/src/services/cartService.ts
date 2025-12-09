@@ -72,7 +72,7 @@ export default class CartService
             }
         });
         if (!cartRes.ok)
-            throw new Error("Failed to add booking to cart: " + (await cartRes.text()));
+            throw new Error("Failed to add booking to cart: " + await cartRes.text());
         this.signal++;
     }
 
@@ -84,7 +84,7 @@ export default class CartService
             method: "PUT"
         });
         if (!res.ok)
-            throw new Error("Failed to remove booking from cart");
+            throw new Error("Failed to remove booking from cart: " + await res.text());
         this.signal++;
     }
 
@@ -101,6 +101,22 @@ export default class CartService
         if(index > -1) {
             this.cart.bookings[index] = combinedBooking;
         }
+        this.signal++;
+    }
+
+    submitPayment = async (cardNumber: string, ccv: string, expDate: string, name: string) => {
+        const url = new URL(this.CART_URL_BASE + this.cartId + "/payment");
+        url.searchParams.append("cardNumber", cardNumber);
+        url.searchParams.append("exp", expDate);
+        url.searchParams.append("cardHolderName", name);
+        url.searchParams.append("ccv", ccv);
+
+        console.log("Fetching with: " + url);
+        const res = await fetch(url, {
+            method: "POST"
+        });
+        if (!res.ok)
+            throw new Error("Failed to process payment: " + await res.text())
         this.signal++;
     }
 }

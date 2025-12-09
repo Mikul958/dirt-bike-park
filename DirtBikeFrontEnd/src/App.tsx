@@ -25,8 +25,6 @@ function App()
       parkService.loadParks()
       .then(loadedParks => {
         setParks(loadedParks);
-        console.log("App: ")
-        console.log(parks);
       })
       cartService.loadCart()
       .then(loadedCart => {
@@ -35,6 +33,7 @@ function App()
   }, [parkService, cartService]);
 
   const handleChange = () => {
+      setParks(parkService.getAllParks())
       setCart(cartService.getCart());
   }
 

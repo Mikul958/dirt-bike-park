@@ -24,7 +24,7 @@ export default function ParkDetails(props: ParkDetailsProps) {
             console.log("Selected Park: ");
             console.log(park);
         }
-    }, [parkId, parkService, parkService.parkSignal])
+    }, [parkId, parkService, parkService.signal])
     
 
     return (

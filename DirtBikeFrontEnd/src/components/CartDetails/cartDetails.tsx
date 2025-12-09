@@ -79,7 +79,7 @@ export default function CartDetails(props: CartDetailsProps) {
                 <input type="radio" name="selectedPayment" value={"PAY_NOW"} checked={paymentOption === "PAY_NOW"} onChange={handleChange} /> Pay Now
             </label>
             {
-                paymentOption === "PAY_NOW" && <PaymentDetails />
+                paymentOption === "PAY_NOW" && <PaymentDetails cartService={cartService} />
             }
         </div>
     )

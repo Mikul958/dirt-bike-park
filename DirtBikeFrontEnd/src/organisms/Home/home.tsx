@@ -26,11 +26,9 @@ export default function Home(props: HomeProps) {
     const [searchParams, setSearchParams] = useState({location: "", rating: 0} as searchParams)
 
     useEffect(() => {
-        parkService.loadParks()
-        .then((loadedParks) => {
-            setParks(loadedParks);
-        });
-    }, [parkService])
+        const retrievedParks = parkService.getAllParks()
+        setParks(retrievedParks)
+    }, [parkService, parkService.signal]);
 
     //This should be done with actual geolocation but none of these parks are real
     //So to simulate, it's just going to be a random chance
