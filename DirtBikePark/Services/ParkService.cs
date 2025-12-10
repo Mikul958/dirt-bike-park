@@ -11,7 +11,20 @@ using System.Linq;
 
 namespace DirtBikePark.Services
 {
-	public class ParkService : IParkService
+	// Mutable version of the Tuple type
+    internal class MutableTuple<T1, T2>
+    {
+        public T1 Item1;
+        public T2 Item2;
+
+        public MutableTuple(T1 item1, T2 item2)
+        {
+            Item1 = item1;
+            Item2 = item2;
+        }
+    }
+    
+    public class ParkService : IParkService
     {
 		private readonly IParkRepository _parkRepository;
         private readonly IBookingRepository _bookingRepository;
@@ -115,7 +128,56 @@ namespace DirtBikePark.Services
             park.GuestLimit = numberOfGuests;
             _parkRepository.UpdatePark(park);
             _parkRepository.Save();
+
+            // Stretch goal -- remove existing guests over limit on every date
+            RemoveGuestsOverNewLimit(parkId, park.GuestLimit);
             return Task.FromResult(true);
+        }
+
+        private void RemoveGuestsOverNewLimit(int parkId, int newGuestLimit)
+        {
+            // Maps a date in the database to a list of Bookings on that date as well as an accumulated guest total
+            Dictionary<DateOnly, MutableTuple<List<Booking>, int>> bookingMap = new Dictionary<DateOnly, MutableTuple<List<Booking>, int>>();
+
+            // Get all bookings for a park and place them into map based on their date (ordered backwards because higher ID = more recent)
+            List<Booking> bookings = _bookingRepository.GetBookingsByPark(parkId).OrderByDescending(booking => booking.Id).ToList();
+            foreach (Booking booking in bookings)
+            {
+                // Initialize a new map entry if the current booking date has not already been encountered
+                if (!bookingMap.ContainsKey(booking.Date))
+                {
+                    MutableTuple<List<Booking>, int> newMapElement = new MutableTuple<List<Booking>, int>(new List<Booking>(), 0);
+                    bookingMap.Add(booking.Date, newMapElement);
+                }
+
+                // Push the new booking to the entry list and add the guest count to its total
+                bookingMap[booking.Date].Item1.Add(booking);
+                bookingMap[booking.Date].Item2 += booking.NumAdults + booking.NumChildren;
+            }
+
+            // Iterate through each date in map and remove bookings over the park's new guest limit
+            List<Booking> bookingsToRemove = new List<Booking>();
+            foreach (MutableTuple<List<Booking>, int> bookingMapElement in bookingMap.Values)
+            {
+                // Exit if count is already below limit
+                int currentGuestCount = bookingMapElement.Item2;
+                if (currentGuestCount <= newGuestLimit)
+                    continue;
+
+                // Iterate through bookings on this date and add to removal list until count falls below limit
+                foreach (Booking booking in bookingMapElement.Item1)
+                {
+                    bookingsToRemove.Add(booking);
+                    currentGuestCount -= (booking.NumAdults + booking.NumChildren);
+
+                    if (currentGuestCount <= newGuestLimit)
+                        break;
+                }
+            }
+
+            // Remove all bookings that have been added to remove list
+            _bookingRepository.RemoveBookingsInList(bookingsToRemove);
+            _bookingRepository.Save();
         }
 
         public Task<bool> RemoveGuestsFromPark(int parkId, DateOnly date, int numberOfGuests)

@@ -11,6 +11,7 @@ namespace DirtBikePark.Interfaces
         IEnumerable<Booking> GetBookingsForParkWithDate(int parkId, DateOnly date);
         void AddBooking(Booking booking);
         void RemoveBooking(Booking booking);
+        void RemoveBookingsInList(List<Booking> booking);
         void Save();
     }
 }
