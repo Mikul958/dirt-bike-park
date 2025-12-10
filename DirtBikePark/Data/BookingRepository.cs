@@ -61,6 +61,11 @@ namespace DirtBikePark.Data
             _context.Bookings.Remove(booking);
         }
 
+        public void RemoveBookingsInList(List<Booking> bookings)
+        {
+            _context.RemoveRange(bookings);
+        }
+
         public void Save()
         {
             _context.SaveChanges();
