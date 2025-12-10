@@ -104,12 +104,16 @@ namespace DirtBikePark.Services
                 throw new InvalidOperationException($"Park with ID {parkId} not found.");
 
             // Assign values then update and save
+            int oldGuestLimit = park.GuestLimit;
             park.PricePerAdult = newPark.PricePerAdult;
             park.PricePerChild = newPark.PricePerChild;
             park.GuestLimit = newPark.GuestLimit;
             _parkRepository.UpdatePark(park);
             _parkRepository.Save();
 
+            // Stretch goal -- remove existing guests over limit on every date
+            if (park.GuestLimit < oldGuestLimit)
+                RemoveGuestsOverNewLimit(parkId, park.GuestLimit);
             return Task.FromResult(true);
         }
 
@@ -125,12 +129,14 @@ namespace DirtBikePark.Services
                 throw new InvalidOperationException($"Park with ID {parkId} not found.");
 
             // Update guest limit and update park in the database
+            int oldGuestLimit = park.GuestLimit;
             park.GuestLimit = numberOfGuests;
             _parkRepository.UpdatePark(park);
             _parkRepository.Save();
 
             // Stretch goal -- remove existing guests over limit on every date
-            RemoveGuestsOverNewLimit(parkId, park.GuestLimit);
+            if (park.GuestLimit < oldGuestLimit)
+                RemoveGuestsOverNewLimit(parkId, park.GuestLimit);
             return Task.FromResult(true);
         }
 
